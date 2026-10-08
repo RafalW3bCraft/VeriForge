@@ -1,0 +1,20 @@
+# Threat Model
+
+This is a prototype assessment, not a claim of production security. Threats and current controls below distinguish implemented behavior from controls that remain planned.
+
+| Threat | Impact | Current mitigation | Residual risk / required work |
+| --- | --- | --- | --- |
+| Prompt injection in messages or email | Model follows attacker instructions or returns manipulated findings | Shared system prompt says supplied content is untrusted; content is serialized as user data | Prompt text is not an isolation boundary. Add adversarial tests, strict output schemas, evidence-grounded verification, and avoid exposing secrets/tools to the model. |
+| Malicious URLs and SSRF | Server accesses internal services or attacker-controlled endpoints | Current extractor parses URLs but does not fetch them | No current fetch path was found. Keep URL analysis offline; if fetching is added, block private/loopback/link-local/metadata IPs, unsafe schemes and redirects, and DNS rebinding. |
+| Forged or replayed webhook | Attacker submits fabricated email events or replays a legitimate delivery | Adapter verifies documented raw-body HMAC-SHA256 and ±300-second timestamp before parsing; SQLite deduplicates stable delivery IDs and message IDs | Secret rotation, public HTTPS deployment, storage availability, and proxy/timing behavior still require deployment verification. |
+| Malicious email attachments | Malware execution or unsafe parser behavior | No attachment intake or execution path currently exists | Keep attachments unsupported; if added, use isolated scanning/storage and strict type/size limits. Never execute attachments. |
+| Oversized or malformed input | Resource exhaustion or parser/model failure | Analyze content has a Pydantic maximum length of 30,000 characters | Add request-body limits, timeouts, bounded concurrency, malformed-output validation, and safe error handling. |
+| Malformed AI output/provider failure | API exception, invalid scores, or fabricated evidence | Central Featherless integration parses JSON, validates Pydantic response schemas, and normalizes provider failures | Generic API failures still need consistent safe error envelopes and timeout observability. |
+| API abuse | Unauthenticated resource consumption or data exposure | No application-layer authentication or rate limiting is configured | Add authentication appropriate to clients, rate limiting, strict CORS, request IDs, security headers, and deployment-layer controls. |
+| Secret leakage | Provider/webhook credentials are exposed in source, logs, or errors | `.env` and `.venv` are ignored; `.env.example` contains blank values | Ensure secrets are never logged or committed; rotate credentials disclosed outside the secret store; sanitize exception details and verify repository history before public release. |
+| Sensitive email retention | Exposure of message content and personal data | Analysis rows have no dedicated raw-input field; structured evidence, short snippets, findings, and results are persisted under configurable retention | Structured snippets/results may still contain sensitive information. Add access controls and verify retention in deployment before real email ingestion. |
+| Unsupported or misleading verdict | User takes unsafe action based on weak or invented claims | The current risk score is computed outside the LLM | Agent output can still be unvalidated; demo heuristics and thresholds are not evaluated. Preserve evidence provenance, distinguish observed/inferred/model claims, and publish measured benchmark results only. |
+
+## Deployment Assumptions
+
+No production security guarantee is made. Before public deployment, configure secrets outside source control, TLS and trusted proxy settings, allowed CORS origins, authentication, rate limits, monitoring, database backups, and retention. Validate these controls in the actual deployment environment.

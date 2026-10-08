@@ -1,14 +1,24 @@
-def calculate_risk(identity, infrastructure, social, verification):
-    weighted = (
-        0.25 * identity["score"]
-        + 0.30 * infrastructure["score"]
-        + 0.20 * social["score"]
-        + 0.25 * verification["score"]
+from config import get_settings
+from models import AgentResult, VerificationResult
+
+
+def calculate_risk(
+    identity: AgentResult,
+    infrastructure: AgentResult,
+    social: AgentResult,
+    verification: VerificationResult,
+) -> float:
+    weights = get_settings().risk_weights
+    weighted = sum(
+        weight * result.score
+        for weight, result in zip(
+            weights, (identity, infrastructure, social, verification), strict=True
+        )
     )
 
     hard_signal = max(
-        identity.get("critical_signal", 0),
-        infrastructure.get("critical_signal", 0),
-        social.get("critical_signal", 0),
+        identity.critical_signal,
+        infrastructure.critical_signal,
+        social.critical_signal,
     )
     return round(max(weighted, hard_signal), 1)
