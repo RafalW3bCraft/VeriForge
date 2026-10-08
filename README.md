@@ -1,52 +1,91 @@
 # VeriForge
 
-VeriForge is a ForgeHacks 2026 prototype for analyzing suspicious messages using extracted indicators, specialist analysis, and a deterministic risk calculation. The model is an analysis component; it does not choose the final verdict.
+VeriForge is a ForgeHacks 2026 prototype for analyzing suspicious messages using extracted indicators, specialist analysis, and deterministic risk scoring. The system is evidence-first: the model interprets signals, while Python validates outcomes and calculates the final decision.
 
-## Current Status
+## Current implementation status
 
-The repository currently contains a FastAPI backend with `GET /health`, `POST /api/v1/analyze`, `GET /api/v1/analyses`, `GET /api/v1/analyses/{id}`, and `POST /api/v1/webhooks/agentboxd`. It extracts URLs, domains, email addresses, urgency terms, credential terms, and financial-action terms, then combines specialist results into a risk score. SQLite stores structured analysis results and evidence for history; there is no dedicated raw-input field.
+The repository contains:
 
-The backend now returns an evidence-derived graph with extracted claims, observations, findings, and decision links, and accepts signed Agentboxd email events. The repository does not yet include a frontend. Do not treat this prototype as a production security service.
+- A FastAPI backend with health, readiness, analysis, history, and Agentboxd webhook endpoints
+- A React/Vite frontend for local interaction and scenario-driven demos
+- An offline evaluation runner and benchmark dataset for reproducible verification
+- SQLite persistence for analyses, evidence, findings, and webhook events
+- A hardened API layer with request-size checks, rate limiting, safe error contracts, and security headers
+- Demo-mode behavior for offline local runs and verified provider validation for live execution
 
-## Architecture Direction
+This project is a prototype and should not be treated as a production-grade security service without additional operational controls, deployment review, and domain-specific validation.
 
-The planned standalone flow is:
+## Architecture flow
 
-Input → normalization → claim extraction → evidence collection → specialist analysis → evidence graph → verification → deterministic risk decision → safe next action → persistence.
+Input → normalization → claim extraction → evidence collection → specialist analysis → evidence graph → verification → deterministic risk decision → persistence
 
-The evidence graph represents observed entities, claims, findings, and provenance. Risk remains calculated in Python; configured weights are initial engineering parameters and have not been benchmarked.
+The evidence graph represents observed entities, claims, findings, and provenance. Risk calculations remain deterministic and are implemented in Python rather than delegated to the model.
 
-## Local Backend
+## Local setup
 
-Python 3.10 or newer is recommended. Install dependencies and start the API:
+Python 3.10 or newer is recommended.
 
 ```sh
 python -m pip install -r requirements.txt
 uvicorn apps.api.main:app --reload
 ```
 
-The API is available at `http://127.0.0.1:8000`; health check: `GET /health`.
+The API is available at `http://127.0.0.1:8000`.
 
-Run the current tests with:
+Useful checks:
 
 ```sh
 python -m pytest -q
+python -m evaluation.runner
 ```
 
 ## Configuration
 
-Copy `.env.example` to `.env` for local configuration. `.env` is ignored by Git; never commit credentials. Demo mode defaults to disabled; enable it explicitly only for local offline testing. Featherless calls require `FEATHERLESS_API_KEY`. Agentboxd variables are placeholders for the planned webhook integration and are not currently consumed by an endpoint.
+Copy `.env.example` to `.env` for local configuration. `.env` is ignored by Git; never commit credentials or secrets.
 
-## Security and Limitations
+Required production variables include:
 
-Analyzed content is attacker-controlled. Current prompts label supplied content untrusted, but prompt text alone is not a security boundary. Live model output is validated against Pydantic result models, but API access is not authenticated or rate-limited, and general error handling needs hardening. URL extraction is offline; the backend does not fetch submitted URLs. No Agentboxd email is processed and no email responses are sent.
+- `DEMO_MODE`
+- `FEATHERLESS_API_KEY` when demo mode is disabled
+- `FEATHERLESS_BASE_URL`
+- `FEATHERLESS_MODEL`
+- `AGENTBOXD_WEBHOOK_SECRET` for signed webhook verification
 
-Risk weights and demo heuristics are prototype choices, not scientifically validated thresholds. There is no benchmark dataset or measured performance report yet. See [the threat model](docs/threat-model.md) and [the architecture notes](docs/architecture.md) for current gaps and planned boundaries.
+For local offline work, keep `DEMO_MODE=true` and avoid live provider dependencies.
 
-## Roadmap
+## Security notes
 
-The remaining implementation is phased: React frontend and graph visualization; evaluation; security hardening; then Docker, CI, and deployment documentation. Features are not claimed as complete until their tests and runtime checks pass.
+- Analyzed content is attacker-controlled and should be treated as untrusted input.
+- Webhook signatures are verified against the documented Agentboxd raw-body contract before parsing.
+- API responses use a safe error envelope and do not expose internal failure details.
+- Request size and request rate are constrained at the ingress layer.
+- URL extraction is offline; the backend does not fetch or validate remote destinations on its own.
 
-## Hackathon
+See [docs/threat-model.md](docs/threat-model.md) and [docs/architecture.md](docs/architecture.md) for the system boundaries and current assumptions.
 
-Project: ForgeHacks 2026, AI + Cybersecurity. Before submission, provide a working deployment, screenshots, a 2–4 minute demo, and a project description. No public deployment or performance results are claimed here.
+## Deployment and CI
+
+A Docker container and a GitHub Actions workflow are included so the repo can be validated in CI and started in a containerized environment.
+
+Docker quick start:
+
+```sh
+docker build -t veriforge .
+docker run --rm -p 8000:8000 --env-file .env veriforge
+```
+
+Compose quick start:
+
+```sh
+docker compose up --build
+```
+
+The workflow in `.github/workflows/ci.yml` runs the Python test suite automatically on pushes and pull requests.
+
+## Submission materials
+
+The final submission checklist is in [docs/submission-checklist.md](docs/submission-checklist.md).
+
+## Hackathon guidance
+
+Project: ForgeHacks 2026, AI + Cybersecurity. Before submission, validate the working deployment, capture screenshots, and provide a short 2–4 minute live walkthrough of the evidence-first workflow without overstating claims about production readiness or security guarantees.

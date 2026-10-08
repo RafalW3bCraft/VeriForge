@@ -1,4 +1,13 @@
+import logging
+import time
+import uuid
+from collections import defaultdict, deque
+from contextlib import asynccontextmanager
+
 from fastapi import BackgroundTasks, FastAPI, HTTPException, Query, Request
+from fastapi.middleware.cors import CORSMiddleware
+from starlette.responses import JSONResponse
+
 from config import get_settings
 from database import PersistenceError, get_database
 from engine import analyze
@@ -18,11 +27,133 @@ from models import (
     WebhookAcknowledgement,
 )
 
-app = FastAPI(title="VeriForge API", version="0.1.0")
+logger = logging.getLogger("veriforge.api")
+settings = get_settings()
+
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    get_settings().validate_runtime()
+    yield
+
+
+app = FastAPI(title="VeriForge API", version="0.1.0", lifespan=lifespan)
+
+allow_origins = list(settings.cors_origins or ["http://localhost:5173", "http://127.0.0.1:5173"])
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allow_origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["*"],
+)
+
+_rate_limit_cache: dict[str, deque[float]] = defaultdict(deque)
+
+
+def _error_code_for(status_code: int) -> str:
+    return {
+        400: "INVALID_REQUEST",
+        401: "UNAUTHORIZED",
+        404: "NOT_FOUND",
+        413: "REQUEST_TOO_LARGE",
+        429: "RATE_LIMITED",
+        500: "INTERNAL_ERROR",
+        503: "SERVICE_UNAVAILABLE",
+    }.get(status_code, "HTTP_ERROR")
+
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    code = exc.status_code
+    message = exc.detail if isinstance(exc.detail, str) else "Request failed"
+    return JSONResponse(
+        status_code=code,
+        content={"error": {"code": _error_code_for(code), "message": message}},
+    )
+
+
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception):
+    logger.exception("Unhandled API exception", extra={"path": request.url.path})
+    return JSONResponse(
+        status_code=500,
+        content={"error": {"code": "INTERNAL_ERROR", "message": "The request could not be processed."}},
+    )
+
+
+@app.middleware("http")
+async def security_and_logging_middleware(request: Request, call_next):
+    request_id = request.headers.get("X-Request-ID") or str(uuid.uuid4())
+    request.state.request_id = request_id
+    start = time.perf_counter()
+
+    if request.method in {"POST", "PUT", "PATCH"}:
+        content_length = request.headers.get("content-length")
+        if content_length is not None:
+            try:
+                if int(content_length) > get_settings().max_request_bytes:
+                    return JSONResponse(
+                        status_code=413,
+                        content={"error": {"code": "REQUEST_TOO_LARGE", "message": "Request body exceeds the configured limit."}},
+                    )
+            except ValueError:
+                pass
+
+    client_ip = request.client.host if request.client else "unknown"
+    now = time.monotonic()
+    bucket = _rate_limit_cache[client_ip]
+    while bucket and now - bucket[0] > 60:
+        bucket.popleft()
+    if len(bucket) >= get_settings().rate_limit_per_minute:
+        logger.warning(
+            "Rate limit exceeded",
+            extra={"request_id": request_id, "path": request.url.path, "client_ip": client_ip},
+        )
+        return JSONResponse(
+            status_code=429,
+            content={"error": {"code": "RATE_LIMITED", "message": "Too many requests. Try again shortly."}},
+        )
+    bucket.append(now)
+
+    response = await call_next(request)
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["Referrer-Policy"] = "no-referrer"
+    response.headers["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
+    response.headers["Cache-Control"] = "no-store"
+    response.headers["X-Request-ID"] = request_id
+    response.headers["Vary"] = "Origin"
+    if request.url.path.startswith("/api"):
+        response.headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none'; base-uri 'none'"
+
+    duration_ms = round((time.perf_counter() - start) * 1000, 2)
+    logger.info(
+        "api_request",
+        extra={
+            "request_id": request_id,
+            "method": request.method,
+            "path": request.url.path,
+            "status_code": response.status_code,
+            "duration_ms": duration_ms,
+            "client_ip": client_ip,
+        },
+    )
+    return response
+
 
 @app.get("/health")
 def health():
     return {"status": "ok", "service": "veriforge-api"}
+
+
+@app.get("/ready")
+def ready():
+    try:
+        get_database()
+    except Exception as exc:  # pragma: no cover - defensive guard
+        raise HTTPException(status_code=503, detail="Database unavailable") from exc
+    return {"status": "ready", "service": "veriforge-api", "demo_mode": get_settings().demo_mode}
 
 @app.post("/api/v1/analyze", response_model=AnalysisResponse)
 async def analyze_endpoint(req: AnalysisRequest):

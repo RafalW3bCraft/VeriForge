@@ -78,9 +78,14 @@ class Settings:
     retention_days: int
     log_level: str
     max_input_chars: int
+    max_request_bytes: int
     featherless_timeout_seconds: float
     featherless_max_retries: int
     risk_weights: tuple[float, float, float, float]
+
+    def validate_runtime(self) -> None:
+        if not self.demo_mode and not self.featherless_api_key:
+            raise RuntimeError("FEATHERLESS_API_KEY is required when DEMO_MODE is false")
 
 
 def get_settings() -> Settings:
@@ -115,6 +120,7 @@ def get_settings() -> Settings:
         retention_days=_read_positive_int("RETENTION_DAYS", 30),
         log_level=os.getenv("LOG_LEVEL", "INFO").upper(),
         max_input_chars=_read_positive_int("MAX_INPUT_CHARS", 30000),
+        max_request_bytes=_read_positive_int("MAX_REQUEST_BYTES", 131072),
         featherless_timeout_seconds=_read_positive_float(
             "FEATHERLESS_TIMEOUT_SECONDS", 30.0
         ),

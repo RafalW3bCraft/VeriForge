@@ -1,0 +1,5816 @@
+{
+  "dataset_total": 150,
+  "category_counts": {
+    "legitimate": 50,
+    "scam": 50,
+    "impersonation": 25,
+    "ambiguous": 25
+  },
+  "metrics": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "false_positive_rate": 0.0,
+    "false_negative_rate": 0.0,
+    "agent_agreement": 0.1,
+    "verification_consistency": 1.0,
+    "evidence_coverage": 0.0
+  },
+  "confusion_matrix": {
+    "tp": 75,
+    "fp": 0,
+    "tn": 45,
+    "fn": 0,
+    "total": 150
+  },
+  "per_category": {
+    "legitimate": {
+      "count": 50,
+      "correct": 45,
+      "average_evidence_coverage": 0.0,
+      "metrics": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "tp": 0,
+        "fp": 0,
+        "tn": 45,
+        "fn": 0
+      }
+    },
+    "scam": {
+      "count": 50,
+      "correct": 50,
+      "average_evidence_coverage": 0.0,
+      "metrics": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "tp": 50,
+        "fp": 0,
+        "tn": 0,
+        "fn": 0
+      }
+    },
+    "impersonation": {
+      "count": 25,
+      "correct": 25,
+      "average_evidence_coverage": 0.0,
+      "metrics": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "tp": 25,
+        "fp": 0,
+        "tn": 0,
+        "fn": 0
+      }
+    },
+    "ambiguous": {
+      "count": 25,
+      "correct": 0,
+      "average_evidence_coverage": 0.0,
+      "metrics": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "false_positive_rate": 0.0,
+        "false_negative_rate": 0.0,
+        "tp": 0,
+        "fp": 0,
+        "tn": 0,
+        "fn": 0
+      }
+    }
+  },
+  "notable_failures": [],
+  "methodology": "Deterministic benchmark using the real VeriForge analysis pipeline in demo mode, with a fixed offline dataset of 150 samples. Ambiguous cases are reported separately and excluded from the strict binary classification metrics.",
+  "limitations": [
+    "This benchmark is deterministic and offline; it does not rely on live Featherless or Agentboxd services.",
+    "The result reflects the current demo-mode heuristic pipeline used in the local evaluation environment.",
+    "Ambiguous examples are reported separately and are excluded from the strict binary classification count."
+  ],
+  "samples": [
+    {
+      "id": "legitimate-001",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-002",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-003",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-004",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "SUSPICIOUS",
+      "expected_label": "benign",
+      "observed_label": "ambiguous",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/notifications",
+        "github.com",
+        "now"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [
+          "urgency_manipulation"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "Identity evidence is inconclusive, while infrastructure and behavioral evidence strongly indicate risk.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 46.5,
+        "verdict": "SUSPICIOUS",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-005",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-006",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-007",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-008",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-009",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-010",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-011",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-012",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-013",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-014",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "SUSPICIOUS",
+      "expected_label": "benign",
+      "observed_label": "ambiguous",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/notifications",
+        "github.com",
+        "now"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [
+          "urgency_manipulation"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "Identity evidence is inconclusive, while infrastructure and behavioral evidence strongly indicate risk.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 46.5,
+        "verdict": "SUSPICIOUS",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-015",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-016",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-017",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-018",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-019",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-020",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-021",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-022",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-023",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-024",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "SUSPICIOUS",
+      "expected_label": "benign",
+      "observed_label": "ambiguous",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/notifications",
+        "github.com",
+        "now"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [
+          "urgency_manipulation"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "Identity evidence is inconclusive, while infrastructure and behavioral evidence strongly indicate risk.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 46.5,
+        "verdict": "SUSPICIOUS",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-025",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-026",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-027",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-028",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-029",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-030",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-031",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-032",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-033",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-034",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "SUSPICIOUS",
+      "expected_label": "benign",
+      "observed_label": "ambiguous",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/notifications",
+        "github.com",
+        "now"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [
+          "urgency_manipulation"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "Identity evidence is inconclusive, while infrastructure and behavioral evidence strongly indicate risk.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 46.5,
+        "verdict": "SUSPICIOUS",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-035",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-036",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-037",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-038",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-039",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-040",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-041",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-042",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-043",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-044",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "SUSPICIOUS",
+      "expected_label": "benign",
+      "observed_label": "ambiguous",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/notifications",
+        "github.com",
+        "now"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [
+          "urgency_manipulation"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "Identity evidence is inconclusive, while infrastructure and behavioral evidence strongly indicate risk.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 46.5,
+        "verdict": "SUSPICIOUS",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-045",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-046",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-047",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-048",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-049",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "legitimate-050",
+      "category": "legitimate",
+      "input_type": "email",
+      "expected_verdict": "SAFE",
+      "observed_verdict": "LOW",
+      "expected_label": "benign",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github.com/settings/security",
+        "github.com"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 41.2,
+        "verdict": "LOW",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-001",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github-security-check.zip",
+        "github-security-check.zip",
+        "immediately",
+        "urgent",
+        "password",
+        "verification code"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-002",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://secure-bank-alert.top",
+        "secure-bank-alert.top",
+        "final notice",
+        "bank account",
+        "transfer"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-003",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://verify-portal.click",
+        "verify-portal.click",
+        "action required",
+        "now",
+        "suspended",
+        "otp",
+        "sign in"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-004",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://shipment-secure.xyz",
+        "shipment-secure.xyz",
+        "payment"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-005",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://account-verify.live",
+        "account-verify.live",
+        "credential"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 92.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-006",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github-security-check.zip",
+        "github-security-check.zip",
+        "immediately",
+        "urgent",
+        "password",
+        "verification code"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-007",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://secure-bank-alert.top",
+        "secure-bank-alert.top",
+        "final notice",
+        "bank account",
+        "transfer"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-008",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://verify-portal.click",
+        "verify-portal.click",
+        "action required",
+        "now",
+        "suspended",
+        "otp",
+        "sign in"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-009",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://shipment-secure.xyz",
+        "shipment-secure.xyz",
+        "payment"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-010",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://account-verify.live",
+        "account-verify.live",
+        "credential"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 92.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-011",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github-security-check.zip",
+        "github-security-check.zip",
+        "immediately",
+        "urgent",
+        "password",
+        "verification code"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-012",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://secure-bank-alert.top",
+        "secure-bank-alert.top",
+        "final notice",
+        "bank account",
+        "transfer"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-013",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://verify-portal.click",
+        "verify-portal.click",
+        "action required",
+        "now",
+        "suspended",
+        "otp",
+        "sign in"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-014",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://shipment-secure.xyz",
+        "shipment-secure.xyz",
+        "payment"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-015",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://account-verify.live",
+        "account-verify.live",
+        "credential"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 92.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-016",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github-security-check.zip",
+        "github-security-check.zip",
+        "immediately",
+        "urgent",
+        "password",
+        "verification code"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-017",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://secure-bank-alert.top",
+        "secure-bank-alert.top",
+        "final notice",
+        "bank account",
+        "transfer"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-018",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://verify-portal.click",
+        "verify-portal.click",
+        "action required",
+        "now",
+        "suspended",
+        "otp",
+        "sign in"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-019",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://shipment-secure.xyz",
+        "shipment-secure.xyz",
+        "payment"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-020",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://account-verify.live",
+        "account-verify.live",
+        "credential"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 92.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-021",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github-security-check.zip",
+        "github-security-check.zip",
+        "immediately",
+        "urgent",
+        "password",
+        "verification code"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-022",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://secure-bank-alert.top",
+        "secure-bank-alert.top",
+        "final notice",
+        "bank account",
+        "transfer"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-023",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://verify-portal.click",
+        "verify-portal.click",
+        "action required",
+        "now",
+        "suspended",
+        "otp",
+        "sign in"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-024",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://shipment-secure.xyz",
+        "shipment-secure.xyz",
+        "payment"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-025",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://account-verify.live",
+        "account-verify.live",
+        "credential"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 92.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-026",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github-security-check.zip",
+        "github-security-check.zip",
+        "immediately",
+        "urgent",
+        "password",
+        "verification code"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-027",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://secure-bank-alert.top",
+        "secure-bank-alert.top",
+        "final notice",
+        "bank account",
+        "transfer"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-028",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://verify-portal.click",
+        "verify-portal.click",
+        "action required",
+        "now",
+        "suspended",
+        "otp",
+        "sign in"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-029",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://shipment-secure.xyz",
+        "shipment-secure.xyz",
+        "payment"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-030",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://account-verify.live",
+        "account-verify.live",
+        "credential"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 92.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-031",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github-security-check.zip",
+        "github-security-check.zip",
+        "immediately",
+        "urgent",
+        "password",
+        "verification code"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-032",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://secure-bank-alert.top",
+        "secure-bank-alert.top",
+        "final notice",
+        "bank account",
+        "transfer"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-033",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://verify-portal.click",
+        "verify-portal.click",
+        "action required",
+        "now",
+        "suspended",
+        "otp",
+        "sign in"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-034",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://shipment-secure.xyz",
+        "shipment-secure.xyz",
+        "payment"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-035",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://account-verify.live",
+        "account-verify.live",
+        "credential"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 92.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-036",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github-security-check.zip",
+        "github-security-check.zip",
+        "immediately",
+        "urgent",
+        "password",
+        "verification code"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-037",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://secure-bank-alert.top",
+        "secure-bank-alert.top",
+        "final notice",
+        "bank account",
+        "transfer"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-038",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://verify-portal.click",
+        "verify-portal.click",
+        "action required",
+        "now",
+        "suspended",
+        "otp",
+        "sign in"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-039",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://shipment-secure.xyz",
+        "shipment-secure.xyz",
+        "payment"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-040",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://account-verify.live",
+        "account-verify.live",
+        "credential"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 92.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-041",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github-security-check.zip",
+        "github-security-check.zip",
+        "immediately",
+        "urgent",
+        "password",
+        "verification code"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-042",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://secure-bank-alert.top",
+        "secure-bank-alert.top",
+        "final notice",
+        "bank account",
+        "transfer"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-043",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://verify-portal.click",
+        "verify-portal.click",
+        "action required",
+        "now",
+        "suspended",
+        "otp",
+        "sign in"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-044",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://shipment-secure.xyz",
+        "shipment-secure.xyz",
+        "payment"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-045",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://account-verify.live",
+        "account-verify.live",
+        "credential"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 92.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-046",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://github-security-check.zip",
+        "github-security-check.zip",
+        "immediately",
+        "urgent",
+        "password",
+        "verification code"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-047",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://secure-bank-alert.top",
+        "secure-bank-alert.top",
+        "final notice",
+        "bank account",
+        "transfer"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-048",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://verify-portal.click",
+        "verify-portal.click",
+        "action required",
+        "now",
+        "suspended",
+        "otp",
+        "sign in"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-049",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://shipment-secure.xyz",
+        "shipment-secure.xyz",
+        "payment"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "scam-050",
+      "category": "scam",
+      "input_type": "message",
+      "expected_verdict": "CRITICAL",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://account-verify.live",
+        "account-verify.live",
+        "credential"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "destination_present"
+        ],
+        "social_engineering": [
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 92.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "impersonation-001",
+      "category": "impersonation",
+      "input_type": "email",
+      "expected_verdict": "HIGH",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://finance-portal.click",
+        "finance-portal.click",
+        "immediately",
+        "verification code",
+        "payment"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "credential_request",
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "5 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 97.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "impersonation-002",
+      "category": "impersonation",
+      "input_type": "email",
+      "expected_verdict": "HIGH",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://it-helpdesk.zip",
+        "it-helpdesk.zip",
+        "password"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "impersonation-003",
+      "category": "impersonation",
+      "input_type": "email",
+      "expected_verdict": "HIGH",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://legal-security.top",
+        "legal-security.top",
+        "otp",
+        "transfer"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "credential_request",
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 97.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "impersonation-004",
+      "category": "impersonation",
+      "input_type": "email",
+      "expected_verdict": "HIGH",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://vendor-approval.xyz",
+        "vendor-approval.xyz",
+        "credential",
+        "payment"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "credential_request",
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 97.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "impersonation-005",
+      "category": "impersonation",
+      "input_type": "email",
+      "expected_verdict": "HIGH",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://payroll-security.click",
+        "payroll-security.click",
+        "immediately"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "impersonation-006",
+      "category": "impersonation",
+      "input_type": "email",
+      "expected_verdict": "HIGH",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://finance-portal.click",
+        "finance-portal.click",
+        "immediately",
+        "verification code",
+        "payment"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "credential_request",
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "5 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 97.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "impersonation-007",
+      "category": "impersonation",
+      "input_type": "email",
+      "expected_verdict": "HIGH",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://it-helpdesk.zip",
+        "it-helpdesk.zip",
+        "password"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "impersonation-008",
+      "category": "impersonation",
+      "input_type": "email",
+      "expected_verdict": "HIGH",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://legal-security.top",
+        "legal-security.top",
+        "otp",
+        "transfer"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "credential_request",
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 97.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "impersonation-009",
+      "category": "impersonation",
+      "input_type": "email",
+      "expected_verdict": "HIGH",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://vendor-approval.xyz",
+        "vendor-approval.xyz",
+        "credential",
+        "payment"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "credential_request",
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 97.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "impersonation-010",
+      "category": "impersonation",
+      "input_type": "email",
+      "expected_verdict": "HIGH",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://payroll-security.click",
+        "payroll-security.click",
+        "immediately"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "impersonation-011",
+      "category": "impersonation",
+      "input_type": "email",
+      "expected_verdict": "HIGH",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://finance-portal.click",
+        "finance-portal.click",
+        "immediately",
+        "verification code",
+        "payment"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "credential_request",
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "5 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 97.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "impersonation-012",
+      "category": "impersonation",
+      "input_type": "email",
+      "expected_verdict": "HIGH",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://it-helpdesk.zip",
+        "it-helpdesk.zip",
+        "password"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "impersonation-013",
+      "category": "impersonation",
+      "input_type": "email",
+      "expected_verdict": "HIGH",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://legal-security.top",
+        "legal-security.top",
+        "otp",
+        "transfer"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "credential_request",
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 97.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "impersonation-014",
+      "category": "impersonation",
+      "input_type": "email",
+      "expected_verdict": "HIGH",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://vendor-approval.xyz",
+        "vendor-approval.xyz",
+        "credential",
+        "payment"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "credential_request",
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 97.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "impersonation-015",
+      "category": "impersonation",
+      "input_type": "email",
+      "expected_verdict": "HIGH",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://payroll-security.click",
+        "payroll-security.click",
+        "immediately"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "impersonation-016",
+      "category": "impersonation",
+      "input_type": "email",
+      "expected_verdict": "HIGH",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://finance-portal.click",
+        "finance-portal.click",
+        "immediately",
+        "verification code",
+        "payment"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "credential_request",
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "5 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 97.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "impersonation-017",
+      "category": "impersonation",
+      "input_type": "email",
+      "expected_verdict": "HIGH",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://it-helpdesk.zip",
+        "it-helpdesk.zip",
+        "password"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "impersonation-018",
+      "category": "impersonation",
+      "input_type": "email",
+      "expected_verdict": "HIGH",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://legal-security.top",
+        "legal-security.top",
+        "otp",
+        "transfer"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "credential_request",
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 97.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "impersonation-019",
+      "category": "impersonation",
+      "input_type": "email",
+      "expected_verdict": "HIGH",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://vendor-approval.xyz",
+        "vendor-approval.xyz",
+        "credential",
+        "payment"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "credential_request",
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 97.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "impersonation-020",
+      "category": "impersonation",
+      "input_type": "email",
+      "expected_verdict": "HIGH",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://payroll-security.click",
+        "payroll-security.click",
+        "immediately"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "impersonation-021",
+      "category": "impersonation",
+      "input_type": "email",
+      "expected_verdict": "HIGH",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://finance-portal.click",
+        "finance-portal.click",
+        "immediately",
+        "verification code",
+        "payment"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation",
+          "credential_request",
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "5 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 97.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "impersonation-022",
+      "category": "impersonation",
+      "input_type": "email",
+      "expected_verdict": "HIGH",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://it-helpdesk.zip",
+        "it-helpdesk.zip",
+        "password"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "impersonation-023",
+      "category": "impersonation",
+      "input_type": "email",
+      "expected_verdict": "HIGH",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://legal-security.top",
+        "legal-security.top",
+        "otp",
+        "transfer"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "credential_request",
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 97.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "impersonation-024",
+      "category": "impersonation",
+      "input_type": "email",
+      "expected_verdict": "HIGH",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.3333333333333333,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://vendor-approval.xyz",
+        "vendor-approval.xyz",
+        "credential",
+        "payment"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "credential_request",
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "4 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 97.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "impersonation-025",
+      "category": "impersonation",
+      "input_type": "email",
+      "expected_verdict": "HIGH",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "malicious",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "https://payroll-security.click",
+        "payroll-security.click",
+        "immediately"
+      ],
+      "agent_findings": {
+        "identity": [
+          "claimed_identity_not_supported_by_destination"
+        ],
+        "infrastructure": [
+          "suspicious_destination_pattern"
+        ],
+        "social_engineering": [
+          "urgency_manipulation"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "3 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 95.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "ambiguous-001",
+      "category": "ambiguous",
+      "input_type": "message",
+      "expected_verdict": "SUSPICIOUS",
+      "observed_verdict": "SAFE",
+      "expected_label": "ambiguous",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "Insufficient evidence supports the specialist risk findings.",
+        "unsupported_claims": [],
+        "evidence_strength": 0.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 14.6,
+        "verdict": "SAFE",
+        "confidence": 0.0,
+        "evidence_strength": 0.0
+      }
+    },
+    {
+      "id": "ambiguous-002",
+      "category": "ambiguous",
+      "input_type": "message",
+      "expected_verdict": "SUSPICIOUS",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "ambiguous",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "login"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [],
+        "social_engineering": [
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 90.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "ambiguous-003",
+      "category": "ambiguous",
+      "input_type": "message",
+      "expected_verdict": "SUSPICIOUS",
+      "observed_verdict": "SAFE",
+      "expected_label": "ambiguous",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "Insufficient evidence supports the specialist risk findings.",
+        "unsupported_claims": [],
+        "evidence_strength": 0.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 14.6,
+        "verdict": "SAFE",
+        "confidence": 0.0,
+        "evidence_strength": 0.0
+      }
+    },
+    {
+      "id": "ambiguous-004",
+      "category": "ambiguous",
+      "input_type": "message",
+      "expected_verdict": "SUSPICIOUS",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "ambiguous",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "payment"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [],
+        "social_engineering": [
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 90.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "ambiguous-005",
+      "category": "ambiguous",
+      "input_type": "message",
+      "expected_verdict": "SUSPICIOUS",
+      "observed_verdict": "SAFE",
+      "expected_label": "ambiguous",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "Insufficient evidence supports the specialist risk findings.",
+        "unsupported_claims": [],
+        "evidence_strength": 0.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 14.6,
+        "verdict": "SAFE",
+        "confidence": 0.0,
+        "evidence_strength": 0.0
+      }
+    },
+    {
+      "id": "ambiguous-006",
+      "category": "ambiguous",
+      "input_type": "message",
+      "expected_verdict": "SUSPICIOUS",
+      "observed_verdict": "SAFE",
+      "expected_label": "ambiguous",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "Insufficient evidence supports the specialist risk findings.",
+        "unsupported_claims": [],
+        "evidence_strength": 0.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 14.6,
+        "verdict": "SAFE",
+        "confidence": 0.0,
+        "evidence_strength": 0.0
+      }
+    },
+    {
+      "id": "ambiguous-007",
+      "category": "ambiguous",
+      "input_type": "message",
+      "expected_verdict": "SUSPICIOUS",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "ambiguous",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "login"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [],
+        "social_engineering": [
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 90.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "ambiguous-008",
+      "category": "ambiguous",
+      "input_type": "message",
+      "expected_verdict": "SUSPICIOUS",
+      "observed_verdict": "SAFE",
+      "expected_label": "ambiguous",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "Insufficient evidence supports the specialist risk findings.",
+        "unsupported_claims": [],
+        "evidence_strength": 0.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 14.6,
+        "verdict": "SAFE",
+        "confidence": 0.0,
+        "evidence_strength": 0.0
+      }
+    },
+    {
+      "id": "ambiguous-009",
+      "category": "ambiguous",
+      "input_type": "message",
+      "expected_verdict": "SUSPICIOUS",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "ambiguous",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "payment"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [],
+        "social_engineering": [
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 90.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "ambiguous-010",
+      "category": "ambiguous",
+      "input_type": "message",
+      "expected_verdict": "SUSPICIOUS",
+      "observed_verdict": "SAFE",
+      "expected_label": "ambiguous",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "Insufficient evidence supports the specialist risk findings.",
+        "unsupported_claims": [],
+        "evidence_strength": 0.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 14.6,
+        "verdict": "SAFE",
+        "confidence": 0.0,
+        "evidence_strength": 0.0
+      }
+    },
+    {
+      "id": "ambiguous-011",
+      "category": "ambiguous",
+      "input_type": "message",
+      "expected_verdict": "SUSPICIOUS",
+      "observed_verdict": "SAFE",
+      "expected_label": "ambiguous",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "Insufficient evidence supports the specialist risk findings.",
+        "unsupported_claims": [],
+        "evidence_strength": 0.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 14.6,
+        "verdict": "SAFE",
+        "confidence": 0.0,
+        "evidence_strength": 0.0
+      }
+    },
+    {
+      "id": "ambiguous-012",
+      "category": "ambiguous",
+      "input_type": "message",
+      "expected_verdict": "SUSPICIOUS",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "ambiguous",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "login"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [],
+        "social_engineering": [
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 90.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "ambiguous-013",
+      "category": "ambiguous",
+      "input_type": "message",
+      "expected_verdict": "SUSPICIOUS",
+      "observed_verdict": "SAFE",
+      "expected_label": "ambiguous",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "Insufficient evidence supports the specialist risk findings.",
+        "unsupported_claims": [],
+        "evidence_strength": 0.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 14.6,
+        "verdict": "SAFE",
+        "confidence": 0.0,
+        "evidence_strength": 0.0
+      }
+    },
+    {
+      "id": "ambiguous-014",
+      "category": "ambiguous",
+      "input_type": "message",
+      "expected_verdict": "SUSPICIOUS",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "ambiguous",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "payment"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [],
+        "social_engineering": [
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 90.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "ambiguous-015",
+      "category": "ambiguous",
+      "input_type": "message",
+      "expected_verdict": "SUSPICIOUS",
+      "observed_verdict": "SAFE",
+      "expected_label": "ambiguous",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "Insufficient evidence supports the specialist risk findings.",
+        "unsupported_claims": [],
+        "evidence_strength": 0.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 14.6,
+        "verdict": "SAFE",
+        "confidence": 0.0,
+        "evidence_strength": 0.0
+      }
+    },
+    {
+      "id": "ambiguous-016",
+      "category": "ambiguous",
+      "input_type": "message",
+      "expected_verdict": "SUSPICIOUS",
+      "observed_verdict": "SAFE",
+      "expected_label": "ambiguous",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "Insufficient evidence supports the specialist risk findings.",
+        "unsupported_claims": [],
+        "evidence_strength": 0.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 14.6,
+        "verdict": "SAFE",
+        "confidence": 0.0,
+        "evidence_strength": 0.0
+      }
+    },
+    {
+      "id": "ambiguous-017",
+      "category": "ambiguous",
+      "input_type": "message",
+      "expected_verdict": "SUSPICIOUS",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "ambiguous",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "login"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [],
+        "social_engineering": [
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 90.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "ambiguous-018",
+      "category": "ambiguous",
+      "input_type": "message",
+      "expected_verdict": "SUSPICIOUS",
+      "observed_verdict": "SAFE",
+      "expected_label": "ambiguous",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "Insufficient evidence supports the specialist risk findings.",
+        "unsupported_claims": [],
+        "evidence_strength": 0.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 14.6,
+        "verdict": "SAFE",
+        "confidence": 0.0,
+        "evidence_strength": 0.0
+      }
+    },
+    {
+      "id": "ambiguous-019",
+      "category": "ambiguous",
+      "input_type": "message",
+      "expected_verdict": "SUSPICIOUS",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "ambiguous",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "payment"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [],
+        "social_engineering": [
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 90.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "ambiguous-020",
+      "category": "ambiguous",
+      "input_type": "message",
+      "expected_verdict": "SUSPICIOUS",
+      "observed_verdict": "SAFE",
+      "expected_label": "ambiguous",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "Insufficient evidence supports the specialist risk findings.",
+        "unsupported_claims": [],
+        "evidence_strength": 0.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 14.6,
+        "verdict": "SAFE",
+        "confidence": 0.0,
+        "evidence_strength": 0.0
+      }
+    },
+    {
+      "id": "ambiguous-021",
+      "category": "ambiguous",
+      "input_type": "message",
+      "expected_verdict": "SUSPICIOUS",
+      "observed_verdict": "SAFE",
+      "expected_label": "ambiguous",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "Insufficient evidence supports the specialist risk findings.",
+        "unsupported_claims": [],
+        "evidence_strength": 0.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 14.6,
+        "verdict": "SAFE",
+        "confidence": 0.0,
+        "evidence_strength": 0.0
+      }
+    },
+    {
+      "id": "ambiguous-022",
+      "category": "ambiguous",
+      "input_type": "message",
+      "expected_verdict": "SUSPICIOUS",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "ambiguous",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "login"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [],
+        "social_engineering": [
+          "credential_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 90.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "ambiguous-023",
+      "category": "ambiguous",
+      "input_type": "message",
+      "expected_verdict": "SUSPICIOUS",
+      "observed_verdict": "SAFE",
+      "expected_label": "ambiguous",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "Insufficient evidence supports the specialist risk findings.",
+        "unsupported_claims": [],
+        "evidence_strength": 0.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 14.6,
+        "verdict": "SAFE",
+        "confidence": 0.0,
+        "evidence_strength": 0.0
+      }
+    },
+    {
+      "id": "ambiguous-024",
+      "category": "ambiguous",
+      "input_type": "message",
+      "expected_verdict": "SUSPICIOUS",
+      "observed_verdict": "CRITICAL",
+      "expected_label": "ambiguous",
+      "observed_label": "malicious",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [
+        "payment"
+      ],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [],
+        "social_engineering": [
+          "financial_action_request"
+        ],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "1 specialist finding(s) are traceable to extracted source evidence.",
+        "unsupported_claims": [],
+        "evidence_strength": 1.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 90.0,
+        "verdict": "CRITICAL",
+        "confidence": 1.0,
+        "evidence_strength": 1.0
+      }
+    },
+    {
+      "id": "ambiguous-025",
+      "category": "ambiguous",
+      "input_type": "message",
+      "expected_verdict": "SUSPICIOUS",
+      "observed_verdict": "SAFE",
+      "expected_label": "ambiguous",
+      "observed_label": "benign",
+      "agent_agreement": 0.0,
+      "verification_consistency": 1.0,
+      "evidence_coverage": 0.0,
+      "extracted_evidence": [],
+      "agent_findings": {
+        "identity": [],
+        "infrastructure": [],
+        "social_engineering": [],
+        "verification": []
+      },
+      "verification_result": {
+        "summary": "Insufficient evidence supports the specialist risk findings.",
+        "unsupported_claims": [],
+        "evidence_strength": 0.0
+      },
+      "deterministic_risk_result": {
+        "risk_score": 14.6,
+        "verdict": "SAFE",
+        "confidence": 0.0,
+        "evidence_strength": 0.0
+      }
+    }
+  ]
+}

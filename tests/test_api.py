@@ -117,3 +117,41 @@ def test_persistence_failure_returns_safe_service_error(monkeypatch):
 
     assert response.status_code == 503
     assert "private database detail" not in response.text
+
+
+def test_ready_route_reports_service_status():
+    response = client.get("/ready")
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["status"] == "ready"
+    assert payload["service"] == "veriforge-api"
+
+
+def test_api_rejects_oversized_request(monkeypatch):
+    monkeypatch.setenv("MAX_REQUEST_BYTES", "64")
+    response = client.post("/api/v1/analyze", json={
+        "content": "x" * 200,
+        "input_type": "message",
+    })
+    assert response.status_code == 413
+    assert response.json()["error"]["code"] == "REQUEST_TOO_LARGE"
+
+
+def test_api_rate_limit_is_enforced(monkeypatch):
+    from apps.api.main import _rate_limit_cache
+
+    _rate_limit_cache.clear()
+    monkeypatch.setenv("RATE_LIMIT", "1")
+    response_one = client.get("/health")
+    response_two = client.get("/health")
+    assert response_one.status_code == 200
+    assert response_two.status_code == 429
+    assert response_two.json()["error"]["code"] == "RATE_LIMITED"
+
+
+def test_api_exposes_security_headers():
+    response = client.get("/health", headers={"Origin": "http://localhost:5173"})
+    assert response.status_code == 200
+    assert response.headers["x-frame-options"] == "DENY"
+    assert response.headers["x-content-type-options"] == "nosniff"
+    assert response.headers["referrer-policy"] == "no-referrer"
