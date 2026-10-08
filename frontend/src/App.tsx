@@ -1,273 +1,220 @@
-import { useEffect, useState } from "react";
-import { Activity, ArrowRight, Clock3, SearchCheck, ShieldAlert } from "lucide-react";
-import {
-  Link,
-  NavLink,
-  Navigate,
-  Route,
-  Routes,
-  useNavigate,
-  useParams,
-} from "react-router-dom";
+import { type FormEvent, useEffect, useMemo, useState } from "react";
+import { Link, NavLink, Route, Routes, useParams } from "react-router-dom";
 import { analyze, getAnalysis, getHealth, listAnalyses } from "./api";
 import { scenarios } from "./scenarios";
 import type { AnalysisResponse, AnalysisSummary, InputType } from "./types";
 
 function App() {
-  const [serviceState, setServiceState] = useState<"checking" | "online" | "offline">(
-    "checking",
-  );
-
-  useEffect(() => {
-    let mounted = true;
-    getHealth()
-      .then(() => {
-        if (mounted) setServiceState("online");
-      })
-      .catch(() => {
-        if (mounted) setServiceState("offline");
-      });
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
   return (
     <div className="app-shell">
       <header className="topbar">
-        <div className="brand-block">
-          <div className="brand-mark">V</div>
-          <div>
-            <div className="brand-name">VeriForge</div>
-            <div className="brand-subtitle">Evidence-first phishing and scam analysis</div>
-          </div>
+        <div>
+          <p className="eyebrow">Threat intelligence workspace</p>
+          <h1>VeriForge</h1>
         </div>
-
-        <nav className="nav" aria-label="Main navigation">
-          <NavLink to="/">Analyze</NavLink>
-          <NavLink to="/history">History</NavLink>
-          <NavLink to="/live">Live Email</NavLink>
+        <nav className="nav">
+          <NavLink to="/" end>
+            Dashboard
+          </NavLink>
+          <NavLink to="/analysis/demo">History</NavLink>
         </nav>
-
-        <div className={`status-pill status-${serviceState}`}>
-          {serviceState === "online" && "Backend online"}
-          {serviceState === "offline" && "Backend offline"}
-          {serviceState === "checking" && "Checking backend"}
-        </div>
       </header>
 
-      <main className="page-shell">
-        <Routes>
-          <Route path="/" element={<AnalyzePage />} />
-          <Route path="/history" element={<HistoryPage />} />
-          <Route path="/live" element={<LivePage />} />
-          <Route path="/analysis/:analysisId" element={<AnalysisPage />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </main>
+      <Routes>
+        <Route path="/" element={<DashboardPage />} />
+        <Route path="/analysis/:analysisId" element={<AnalysisPage />} />
+      </Routes>
     </div>
   );
 }
 
-function AnalyzePage() {
-  const navigate = useNavigate();
-  const [inputType, setInputType] = useState<InputType>("message");
+function DashboardPage() {
   const [content, setContent] = useState(scenarios[0].content);
-  const [loading, setLoading] = useState(false);
+  const [inputType, setInputType] = useState<InputType>("message");
+  const [history, setHistory] = useState<AnalysisSummary[]>([]);
+  const [result, setResult] = useState<AnalysisResponse | null>(null);
+  const [status, setStatus] = useState<string>("Checking backend...");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleScenario = (scenario: (typeof scenarios)[number]) => {
-    setInputType(scenario.type);
-    setContent(scenario.content);
-  };
+  useEffect(() => {
+    const loadDashboard = async () => {
+      try {
+        const health = await getHealth();
+        setStatus(`Backend connected (${health.status})`);
+      } catch {
+        setStatus("Backend unavailable");
+      }
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+      try {
+        const list = await listAnalyses(10);
+        setHistory(list.items);
+      } catch {
+        setHistory([]);
+      }
+    };
+
+    void loadDashboard();
+  }, []);
+
+  const handleAnalyze = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setLoading(true);
-    setError(null);
+    if (!content.trim()) {
+      setError("Please provide message content to analyze.");
+      return;
+    }
 
     try {
-      const result = await analyze(content.trim(), inputType);
-      navigate(`/analysis/${result.analysis_id}`);
+      setIsSubmitting(true);
+      setError(null);
+      const analysis = await analyze(content, inputType);
+      setResult(analysis);
+      const nextSummary: AnalysisSummary = {
+        analysis_id: analysis.analysis_id,
+        created_at: analysis.created_at,
+        input_type: analysis.input_type,
+        score: analysis.score,
+        verdict: analysis.verdict,
+        summary: analysis.summary,
+      };
+      setHistory((current) => [nextSummary, ...current.filter((item) => item.analysis_id !== analysis.analysis_id)]);
     } catch (err) {
-      const message = err instanceof Error ? err.message : "The analysis request failed.";
-      setError(message);
+      setError(err instanceof Error ? err.message : "Analysis request failed.");
     } finally {
-      setLoading(false);
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="content-grid two-column">
-      <section className="panel">
+    <main className="page-grid">
+      <section className="panel panel-main">
         <div className="panel-header">
-          <div className="eyebrow">Threat intake</div>
-          <h1>Analyze suspicious content</h1>
+          <div>
+            <p className="eyebrow">Signal intake</p>
+            <h2>Analyze message</h2>
+          </div>
+          <span className="badge badge-info">{status}</span>
         </div>
 
-        <form className="analysis-form" onSubmit={handleSubmit}>
-          <label className="field-group">
-            <span>Input type</span>
-            <select value={inputType} onChange={(e) => setInputType(e.target.value as InputType)}>
+        <form className="analysis-form" onSubmit={handleAnalyze}>
+          <div className="field-row">
+            <label htmlFor="input-type">Input type</label>
+            <select
+              id="input-type"
+              value={inputType}
+              onChange={(event) => setInputType(event.target.value as InputType)}
+            >
               <option value="message">Message</option>
               <option value="email">Email</option>
               <option value="url">URL</option>
             </select>
-          </label>
+          </div>
 
-          <label className="field-group">
-            <span>Content</span>
+          <div className="field-row">
+            <label htmlFor="message-content">Message content</label>
             <textarea
+              id="message-content"
+              aria-label="Message content"
+              rows={10}
               value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Paste the suspicious message, email, or URL context here."
-              rows={12}
+              onChange={(event) => setContent(event.target.value)}
+              placeholder="Paste a suspicious message or email here..."
             />
-          </label>
+          </div>
 
-          {error && <div className="alert error">{error}</div>}
+          <div className="scenario-list">
+            {scenarios.map((scenario) => (
+              <button
+                key={scenario.id}
+                type="button"
+                className="scenario-button"
+                onClick={() => {
+                  setContent(scenario.content);
+                  setInputType(scenario.type);
+                }}
+              >
+                {scenario.name}
+              </button>
+            ))}
+          </div>
 
-          <div className="button-row">
-            <button className="primary-button" type="submit" disabled={loading || !content.trim()}>
-              {loading ? "Analyzing..." : "Run analysis"}
+          <div className="action-row">
+            <button type="submit" className="primary-button" disabled={isSubmitting}>
+              {isSubmitting ? "Analyzing..." : "Analyze message"}
             </button>
           </div>
+
+          {error ? <p className="error-text">{error}</p> : null}
         </form>
       </section>
 
-      <aside className="panel">
+      <section className="panel panel-result">
         <div className="panel-header">
-          <div className="eyebrow">Sample scenarios</div>
-          <h2>Quick checks</h2>
+          <div>
+            <p className="eyebrow">Latest result</p>
+            <h2>Risk overview</h2>
+          </div>
         </div>
 
-        <div className="scenario-list">
-          {scenarios.map((scenario) => (
-            <button
-              key={scenario.id}
-              type="button"
-              className="scenario-card"
-              onClick={() => handleScenario(scenario)}
-            >
-              <div className="scenario-name">{scenario.name}</div>
-              <div className="scenario-meta">{scenario.type}</div>
-            </button>
-          ))}
-        </div>
-      </aside>
-    </div>
-  );
-}
-
-function HistoryPage() {
-  const [items, setItems] = useState<AnalysisSummary[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let active = true;
-
-    listAnalyses(20)
-      .then((response) => {
-        if (active) setItems(response.items ?? []);
-      })
-      .catch((err) => {
-        if (active) setError(err instanceof Error ? err.message : "History unavailable.");
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
-
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  return (
-    <div className="panel">
-      <div className="panel-header inline-header">
-        <div>
-          <div className="eyebrow">History</div>
-          <h1>Recent analysis records</h1>
-        </div>
-        <div className="header-stat">{items.length} entries</div>
-      </div>
-
-      {loading && <div className="muted">Loading history…</div>}
-      {error && <div className="alert error">{error}</div>}
-
-      {!loading && !error && items.length === 0 && (
-        <div className="empty-state">No analyses have been saved yet.</div>
-      )}
-
-      <div className="history-list">
-        {items.map((item) => (
-          <Link key={item.analysis_id} to={`/analysis/${item.analysis_id}`} className="history-card">
-            <div className="history-topline">
-              <span className={`verdict-badge verdict-${item.verdict.toLowerCase()}`}>
-                {item.verdict}
-              </span>
-              <span className="muted">{new Date(item.created_at).toLocaleString()}</span>
+        {result ? (
+          <div className="result-summary">
+            <div className="stat-row">
+              <span className="stat-label">Verdict</span>
+              <strong className={`verdict verdict-${result.verdict.toLowerCase()}`}>{result.verdict}</strong>
             </div>
-            <div className="history-score">{item.score.toFixed(1)} / 100</div>
-            <div className="history-summary">{item.summary}</div>
-            <div className="history-link">
-              Open analysis <ArrowRight size={14} />
+            <div className="stat-row">
+              <span className="stat-label">Risk score</span>
+              <strong>{Math.round(result.risk_decision.risk_score)}</strong>
             </div>
-          </Link>
-        ))}
-      </div>
-    </div>
-  );
-}
+            <div className="stat-row">
+              <span className="stat-label">Confidence</span>
+              <strong>{(result.confidence * 100).toFixed(0)}%</strong>
+            </div>
+            <p className="summary-copy">{result.summary}</p>
+            <p className="recommendation">{result.recommended_action}</p>
 
-function LivePage() {
-  const navigate = useNavigate();
-  const [content, setContent] = useState(
-    "From: ceo-office@example.test\nSubject: Urgent wire request\n\nI need this kept private. Please transfer funds before 5 PM and use the updated account details in the secure portal.",
-  );
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+            <div className="graph-preview">
+              {result.graph.nodes.slice(0, 8).map((node) => (
+                <span key={node.id} className="node-pill" title={node.type}>
+                  {node.label}
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="empty-state">
+            <p>No analysis has been run yet.</p>
+            <p>Use a sample phishing message or paste a real threat report to start.</p>
+          </div>
+        )}
+      </section>
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    try {
-      const result = await analyze(content.trim(), "email");
-      navigate(`/analysis/${result.analysis_id}`);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : "Live analysis failed.";
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <div className="panel">
-      <div className="panel-header">
-        <div className="eyebrow">Live email analysis</div>
-        <h1>Monitor incoming suspicious email content</h1>
-      </div>
-
-      <form className="analysis-form" onSubmit={handleSubmit}>
-        <label className="field-group">
-          <span>Email body</span>
-          <textarea value={content} onChange={(e) => setContent(e.target.value)} rows={14} />
-        </label>
-
-        {error && <div className="alert error">{error}</div>}
-
-        <div className="button-row">
-          <button className="primary-button" type="submit" disabled={loading || !content.trim()}>
-            {loading ? "Scanning..." : "Run live scan"}
-          </button>
+      <section className="panel panel-history">
+        <div className="panel-header">
+          <div>
+            <p className="eyebrow">History</p>
+            <h2>Saved analyses</h2>
+          </div>
         </div>
-      </form>
-    </div>
+
+        <div className="history-list">
+          {history.length ? (
+            history.map((item) => (
+              <Link key={item.analysis_id} to={`/analysis/${item.analysis_id}`} className="history-item">
+                <span className={`verdict verdict-${item.verdict.toLowerCase()}`}>{item.verdict}</span>
+                <div>
+                  <strong>{item.input_type}</strong>
+                  <small>{new Date(item.created_at).toLocaleString()}</small>
+                </div>
+                <span className="score-badge">{Math.round(item.score)}</span>
+              </Link>
+            ))
+          ) : (
+            <p className="empty-text">No saved analyses yet.</p>
+          )}
+        </div>
+      </section>
+    </main>
   );
 }
 
@@ -279,197 +226,115 @@ function AnalysisPage() {
 
   useEffect(() => {
     if (!analysisId) {
+      setError("Missing analysis identifier.");
       setLoading(false);
-      setError("Analysis id is missing.");
       return;
     }
 
-    let active = true;
-    getAnalysis(analysisId)
-      .then((result) => {
-        if (active) setAnalysis(result);
-      })
-      .catch((err) => {
-        if (active) setError(err instanceof Error ? err.message : "The analysis could not be loaded.");
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
-
-    return () => {
-      active = false;
+    const loadAnalysis = async () => {
+      try {
+        setLoading(true);
+        const result = await getAnalysis(analysisId);
+        setAnalysis(result);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unable to fetch analysis.");
+      } finally {
+        setLoading(false);
+      }
     };
+
+    void loadAnalysis();
   }, [analysisId]);
 
-  if (loading) return <div className="panel"><div className="muted">Loading analysis…</div></div>;
-  if (error) return <div className="panel"><div className="alert error">{error}</div></div>;
-  if (!analysis) return <div className="panel"><div className="empty-state">No analysis data available.</div></div>;
+  const graph = useMemo(() => analysis?.graph ?? { nodes: [], edges: [] }, [analysis]);
 
-  const totalEvidence = analysis.extraction.evidence.length + analysis.findings.length;
+  if (loading) {
+    return <div className="panel"><p>Loading response…</p></div>;
+  }
+
+  if (error || !analysis) {
+    return <div className="panel"><p>{error ?? "Analysis not found."}</p></div>;
+  }
 
   return (
-    <div className="analysis-page">
-      <section className="panel summary-panel">
-        <div className="panel-header inline-header">
+    <main className="analysis-page">
+      <section className="panel panel-full">
+        <div className="panel-header">
           <div>
-            <div className="eyebrow">Analysis result</div>
-            <h1>{analysis.analysis_id}</h1>
+            <p className="eyebrow">Evidence report</p>
+            <h2>{analysis.summary}</h2>
           </div>
-          <div className={`verdict-badge verdict-${analysis.verdict.toLowerCase()}`}>{analysis.verdict}</div>
+          <Link to="/" className="secondary-link">Back to dashboard</Link>
         </div>
 
-        <div className="metrics-grid">
-          <MetricCard icon={<ShieldAlert size={18} />} label="Risk score" value={`${analysis.score.toFixed(1)}/100`} />
-          <MetricCard icon={<SearchCheck size={18} />} label="Confidence" value={`${(analysis.confidence * 100).toFixed(0)}%`} />
-          <MetricCard icon={<Clock3 size={18} />} label="Evidence" value={String(totalEvidence)} />
-          <MetricCard icon={<Activity size={18} />} label="Input" value={analysis.input_type} />
-        </div>
+        <div className="detail-grid">
+          <div className="detail-card">
+            <h3>Decision</h3>
+            <p className="stat-value">{analysis.verdict}</p>
+            <p>Risk score: {Math.round(analysis.risk_decision.risk_score)}</p>
+            <p>Evidence strength: {(analysis.risk_decision.evidence_strength * 100).toFixed(0)}%</p>
+            <p>{analysis.recommended_action}</p>
+          </div>
 
-        <div className="summary-box">
-          <h3>Recommended action</h3>
-          <p>{analysis.recommended_action}</p>
-        </div>
-
-        <div className="summary-box">
-          <h3>Summary</h3>
-          <p>{analysis.summary}</p>
+          <div className="detail-card">
+            <h3>Extraction</h3>
+            <ul>
+              {analysis.extraction.urls.length ? <li>URLs: {analysis.extraction.urls.join(", ")}</li> : <li>No URLs extracted.</li>}
+              {analysis.extraction.domains.length ? <li>Domains: {analysis.extraction.domains.join(", ")}</li> : null}
+              {analysis.extraction.emails.length ? <li>Emails: {analysis.extraction.emails.join(", ")}</li> : null}
+              {analysis.extraction.credential_terms.length ? <li>Credential terms: {analysis.extraction.credential_terms.join(", ")}</li> : null}
+            </ul>
+          </div>
         </div>
       </section>
 
-      <section className="content-grid two-column">
-        <article className="panel">
-          <div className="panel-header">
-            <div className="eyebrow">Evidence</div>
-            <h2>Signals extracted</h2>
-          </div>
-
-          <div className="chip-list">
-            {analysis.extraction.urls.map((url) => (
-              <span key={url} className="chip">URL: {url}</span>
-            ))}
-            {analysis.extraction.domains.map((domain) => (
-              <span key={domain} className="chip">Domain: {domain}</span>
-            ))}
-            {analysis.extraction.emails.map((email) => (
-              <span key={email} className="chip">Email: {email}</span>
-            ))}
-            {analysis.extraction.urgency_terms.map((term) => (
-              <span key={term} className="chip">Urgency: {term}</span>
-            ))}
-            {analysis.extraction.credential_terms.map((term) => (
-              <span key={term} className="chip">Credential: {term}</span>
-            ))}
-            {analysis.extraction.financial_terms.map((term) => (
-              <span key={term} className="chip">Finance: {term}</span>
-            ))}
-          </div>
-
-          <div className="list-block">
-            {analysis.extraction.evidence.map((evidence) => (
-              <div key={evidence.id} className="list-item">
-                <div className="list-item-header">
-                  <span className="badge">{evidence.kind}</span>
-                  <span className={evidence.observed ? "ok-text" : "warn-text"}>
-                    {evidence.observed ? "Observed" : "Not observed"}
-                  </span>
-                </div>
-                <div className="list-item-value">{evidence.value}</div>
-                {evidence.snippet && <div className="list-item-snippet">{evidence.snippet}</div>}
-              </div>
-            ))}
-          </div>
-        </article>
-
-        <article className="panel">
-          <div className="panel-header">
-            <div className="eyebrow">Findings</div>
-            <h2>Priority alerts</h2>
-          </div>
-
-          <div className="list-block">
-            {analysis.findings.map((finding, index) => (
-              <div key={`${finding.finding}-${index}`} className="list-item">
-                <div className="list-item-header">
-                  <span className={`badge severity-${finding.severity}`}>{finding.severity}</span>
-                  <span className="muted">{finding.source}</span>
-                </div>
-                <div className="list-item-value">{finding.finding}</div>
-                <div className="list-item-snippet">{finding.evidence}</div>
-              </div>
-            ))}
-          </div>
-        </article>
-      </section>
-
-      <section className="panel">
+      <section className="panel panel-full">
         <div className="panel-header">
-          <div className="eyebrow">Agent review</div>
-          <h2>Specialist model scores</h2>
-        </div>
-
-        <div className="agent-grid">
-          <AgentCard title="Identity" result={analysis.agents.identity} />
-          <AgentCard title="Infrastructure" result={analysis.agents.infrastructure} />
-          <AgentCard title="Social engineering" result={analysis.agents.social_engineering} />
-          <AgentCard title="Verification" result={analysis.agents.verification} />
-        </div>
-      </section>
-
-      <section className="panel">
-        <div className="panel-header">
-          <div className="eyebrow">Evidence graph</div>
-          <h2>Relationship map</h2>
+          <div>
+            <p className="eyebrow">Evidence graph</p>
+            <h2>Claim relationships</h2>
+          </div>
         </div>
 
         <div className="graph-grid">
-          {analysis.graph.nodes.map((node) => (
+          {graph.nodes.map((node) => (
             <div key={node.id} className="graph-node">
-              <div className="graph-node-title">{node.label}</div>
-              <div className="graph-node-type">{node.type}</div>
+              <strong>{node.label}</strong>
+              <span>{node.type}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="edge-list">
+          {graph.edges.map((edge, index) => (
+            <div key={`${edge.source}-${edge.target}-${index}`} className="graph-edge">
+              <span>{edge.source}</span>
+              <span className="relation">{edge.relation}</span>
+              <span>{edge.target}</span>
             </div>
           ))}
         </div>
       </section>
-    </div>
-  );
-}
 
-function MetricCard({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="metric-card">
-      <div className="metric-icon">{icon}</div>
-      <div>
-        <div className="metric-label">{label}</div>
-        <div className="metric-value">{value}</div>
-      </div>
-    </div>
-  );
-}
+      <section className="panel panel-full">
+        <div className="panel-header">
+          <div>
+            <p className="eyebrow">Findings</p>
+            <h2>Agent observations</h2>
+          </div>
+        </div>
 
-function AgentCard({ title, result }: { title: string; result: AnalysisResponse["agents"][keyof AnalysisResponse["agents"]] }) {
-  const score = (result.score ?? 0).toFixed(1);
-  const confidence = ((result.confidence ?? 0) * 100).toFixed(0);
-
-  return (
-    <div className="agent-card">
-      <div className="list-item-header">
-        <div className="agent-card-title">{title}</div>
-        <span className="badge">{score}</span>
-      </div>
-      <div className="agent-summary">{result.summary}</div>
-      <div className="agent-meta">
-        <span className="muted">confidence: {confidence}%</span>
-        <span className="muted">critical signal: {(result.critical_signal ?? 0).toFixed(1)}</span>
-      </div>
-    </div>
+        <div className="findings-list">
+          {analysis.findings.map((finding, index) => (
+            <div key={`${finding.finding}-${index}`} className="finding-item">
+              <p className="finding-title">{finding.finding}</p>
+              <p>{finding.evidence}</p>
+              <span className={`severity severity-${finding.severity}`}>{finding.severity}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+    </main>
   );
 }
 

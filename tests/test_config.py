@@ -1,5 +1,9 @@
+import importlib
+from pathlib import Path
+
 import pytest
 
+import config
 from config import get_settings
 
 
@@ -32,3 +36,14 @@ def test_settings_reject_invalid_boolean_and_nonpositive_limit(monkeypatch):
     monkeypatch.setenv("RATE_LIMIT", "0")
     with pytest.raises(ValueError, match="RATE_LIMIT"):
         get_settings()
+
+
+def test_project_root_env_is_loaded_when_working_directory_changes(monkeypatch):
+    repo_root = Path(__file__).resolve().parents[1]
+    monkeypatch.chdir(repo_root.parent)
+    monkeypatch.delenv("FEATHERLESS_MODEL", raising=False)
+
+    importlib.reload(config)
+    settings = config.get_settings()
+
+    assert settings.featherless_model == "moonshotai/Kimi-K3"
