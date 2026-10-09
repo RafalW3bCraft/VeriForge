@@ -16,15 +16,71 @@ function App() {
           <NavLink to="/" end>
             Dashboard
           </NavLink>
-          <NavLink to="/analysis/demo">History</NavLink>
+          <NavLink to="/history">History</NavLink>
         </nav>
       </header>
 
       <Routes>
         <Route path="/" element={<DashboardPage />} />
+        <Route path="/history" element={<HistoryPage />} />
         <Route path="/analysis/:analysisId" element={<AnalysisPage />} />
       </Routes>
     </div>
+  );
+}
+
+function HistoryPage() {
+  const [items, setItems] = useState<AnalysisSummary[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadHistory = async () => {
+      try {
+        const result = await listAnalyses(20);
+        setItems(result.items);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unable to load history.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    void loadHistory();
+  }, []);
+
+  if (loading) {
+    return <main className="panel"><p>Loading analysis history…</p></main>;
+  }
+
+  if (error) {
+    return <main className="panel"><p>{error}</p></main>;
+  }
+
+  return (
+    <main className="page-grid">
+      <section className="panel panel-full">
+        <div className="panel-header">
+          <div>
+            <p className="eyebrow">History</p>
+            <h2>Saved analyses</h2>
+          </div>
+          <Link to="/" className="secondary-link">Back to dashboard</Link>
+        </div>
+        <div className="history-list">
+          {items.length ? items.map((item) => (
+            <Link key={item.analysis_id} to={`/analysis/${item.analysis_id}`} className="history-item">
+              <span className={`verdict verdict-${item.verdict.toLowerCase()}`}>{item.verdict}</span>
+              <div>
+                <strong>{item.input_type}</strong>
+                <small>{new Date(item.created_at).toLocaleString()}</small>
+              </div>
+              <span className="score-badge">{Math.round(item.score)}</span>
+            </Link>
+          )) : <p className="empty-text">No analyses saved yet.</p>}
+        </div>
+      </section>
+    </main>
   );
 }
 

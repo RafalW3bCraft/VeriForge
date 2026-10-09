@@ -1,5 +1,7 @@
 __pycache__/
 .pytest_cache/
+.vite/
+.artifacts/
 .git/
 .gitignore
 .env
@@ -10,4 +12,8 @@ __pycache__/
 *.sqlite3
 .venv/
 venv/
+node_modules/
+frontend/node_modules/
+frontend/dist/
+dist/
 .DS_Store

@@ -46,4 +46,4 @@ def test_project_root_env_is_loaded_when_working_directory_changes(monkeypatch):
     importlib.reload(config)
     settings = config.get_settings()
 
-    assert settings.featherless_model == "moonshotai/Kimi-K3"
+    assert settings.featherless_model == "Qwen/Qwen3.5-27B"

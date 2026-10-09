@@ -186,9 +186,11 @@ def main() -> None:
         "confusion_matrix": report["confusion_matrix"],
         "category_counts": report["category_counts"],
     }, indent=2))
-    output_path = Path(__file__).resolve().parent / "latest_report.json"
+    artifact_dir = Path(__file__).resolve().parent.parent / ".artifacts"
+    artifact_dir.mkdir(parents=True, exist_ok=True)
+    output_path = artifact_dir / "latest_report.json"
     save_report(report, output_path)
-    markdown_path = Path(__file__).resolve().parent / "latest_report.md"
+    markdown_path = artifact_dir / "latest_report.md"
     markdown_path.write_text(generate_markdown_report(report), encoding="utf-8")
 
 

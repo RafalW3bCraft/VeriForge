@@ -3,9 +3,12 @@ import time
 import uuid
 from collections import defaultdict, deque
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import BackgroundTasks, FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from starlette.responses import JSONResponse
 
 from config import get_settings
@@ -47,6 +50,10 @@ app.add_middleware(
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
+
+frontend_dist = Path(__file__).resolve().parents[2] / "frontend" / "dist"
+if frontend_dist.exists():
+    app.mount("/assets", StaticFiles(directory=str(frontend_dist / "assets")), name="assets")
 
 _rate_limit_cache: dict[str, deque[float]] = defaultdict(deque)
 
@@ -140,6 +147,21 @@ async def security_and_logging_middleware(request: Request, call_next):
         },
     )
     return response
+
+
+@app.get("/", include_in_schema=False)
+async def root_page():
+    if frontend_dist.exists() and (frontend_dist / "index.html").exists():
+        return FileResponse(frontend_dist / "index.html")
+    return {"status": "ok", "service": "veriforge-api"}
+
+
+@app.get("/history", include_in_schema=False)
+@app.get("/analysis/{analysis_id:path}", include_in_schema=False)
+async def spa_fallback(analysis_id: str | None = None):
+    if frontend_dist.exists() and (frontend_dist / "index.html").exists():
+        return FileResponse(frontend_dist / "index.html")
+    return {"status": "ok", "service": "veriforge-api"}
 
 
 @app.get("/health")

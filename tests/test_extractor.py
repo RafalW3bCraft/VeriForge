@@ -37,3 +37,25 @@ def test_short_message_snippets_do_not_copy_the_full_body():
     result = extract_claims(message)
 
     assert all(item.snippet != message for item in result.evidence)
+
+
+def test_real_credential_requests_are_detected_but_negated_mentions_are_not():
+    malicious = "The security team needs your password and OTP now."
+    safe = "The security team will never ask for your password. Review through the official site."
+
+    malicious_result = extract_claims(malicious)
+    safe_result = extract_claims(safe)
+
+    assert malicious_result.requests_credentials is True
+    assert safe_result.requests_credentials is False
+
+
+def test_real_financial_requests_are_detected_but_payment_success_is_not():
+    malicious = "Wire $8,400 immediately to the updated account."
+    safe = "Your payment was completed successfully. No action is required."
+
+    malicious_result = extract_claims(malicious)
+    safe_result = extract_claims(safe)
+
+    assert malicious_result.requests_financial_action is True
+    assert safe_result.requests_financial_action is False
