@@ -29,6 +29,28 @@ def test_analysis_demo(monkeypatch):
     assert data["verdict"] in {"SAFE","LOW","SUSPICIOUS","HIGH","CRITICAL"}
 
 
+def test_repeated_analysis_persists_without_evidence_id_collision(monkeypatch):
+    monkeypatch.setenv("DEMO_MODE", "true")
+    payload = {
+        "content": (
+            "URGENT: verify your account at "
+            "https://github-security-check.zip and enter your password."
+        ),
+        "input_type": "message",
+    }
+
+    first = client.post("/api/v1/analyze", json=payload)
+    second = client.post("/api/v1/analyze", json=payload)
+
+    assert first.status_code == 200
+    assert second.status_code == 200
+    first_id = first.json()["analysis_id"]
+    second_id = second.json()["analysis_id"]
+    assert first_id != second_id
+    history = client.get("/api/v1/analyses").json()["items"]
+    assert {item["analysis_id"] for item in history} == {first_id, second_id}
+
+
 def test_phishing_analysis_returns_traceable_evidence_graph(monkeypatch):
     monkeypatch.setenv("DEMO_MODE", "true")
     response = client.post("/api/v1/analyze", json={

@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   api:
     build:
@@ -8,8 +6,14 @@ services:
     env_file:
       - .env
     environment:
-      DEMO_MODE: "true"
+      DEMO_MODE: "${DEMO_MODE:-true}"
+      DATABASE_URL: "${DATABASE_URL:-sqlite:////app/data/veriforge.db}"
       PYTHONUNBUFFERED: "1"
     ports:
       - "8000:8000"
+    volumes:
+      - veriforge-data:/app/data
     restart: unless-stopped
+
+volumes:
+  veriforge-data:

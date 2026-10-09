@@ -182,7 +182,7 @@ class Database:
                 ))
                 for evidence in response.extraction.evidence:
                     session.add(EvidenceRecord(
-                        evidence_id=evidence.id,
+                        evidence_id=f"{response.analysis_id}:{evidence.id}",
                         analysis_id=response.analysis_id,
                         kind=evidence.kind,
                         value=evidence.value,

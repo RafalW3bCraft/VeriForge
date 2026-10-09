@@ -1,91 +1,127 @@
 # VeriForge
 
-VeriForge is a ForgeHacks 2026 prototype for analyzing suspicious messages using extracted indicators, specialist analysis, and deterministic risk scoring. The system is evidence-first: the model interprets signals, while Python validates outcomes and calculates the final decision.
+VeriForge is a prototype for evidence-first analysis of suspicious messages. It extracts indicators, runs specialist analyses, verifies findings against extracted evidence, and calculates the final risk score deterministically in Python.
 
-## Current implementation status
+The project includes a FastAPI API, a React/Vite frontend, SQLite analysis history, a signed Agentboxd webhook endpoint, and an offline evaluation runner. It is not a production-grade security service; do not use its verdicts as the sole basis for security decisions.
 
-The repository contains:
+## Quick Start: Local App
 
-- A FastAPI backend with health, readiness, analysis, history, and Agentboxd webhook endpoints
-- A React/Vite frontend for local interaction and scenario-driven demos
-- An offline evaluation runner and benchmark dataset for reproducible verification
-- SQLite persistence for analyses, evidence, findings, and webhook events
-- A hardened API layer with request-size checks, rate limiting, safe error contracts, and security headers
-- Demo-mode behavior for offline local runs and verified provider validation for live execution
-
-This project is a prototype and should not be treated as a production-grade security service without additional operational controls, deployment review, and domain-specific validation.
-
-## Architecture flow
-
-Input → normalization → claim extraction → evidence collection → specialist analysis → evidence graph → verification → deterministic risk decision → persistence
-
-The evidence graph represents observed entities, claims, findings, and provenance. Risk calculations remain deterministic and are implemented in Python rather than delegated to the model.
-
-## Local setup
-
-Python 3.10 or newer is recommended.
+Requirements: Python 3.10+ and pip. The commands below are for Linux/macOS; use the equivalent virtual-environment activation command on Windows.
 
 ```sh
+python -m venv .venv
+source .venv/bin/activate
 python -m pip install -r requirements.txt
+test -f .env || cp .env.example .env
 uvicorn apps.api.main:app --reload
 ```
 
-The API is available at `http://127.0.0.1:8000`.
+`.env.example` sets `DEMO_MODE=true`, so this starts offline without provider credentials. Open <http://127.0.0.1:8000> for the built-in web app. The API health endpoints are <http://127.0.0.1:8000/health> and <http://127.0.0.1:8000/ready>; interactive API documentation is at <http://127.0.0.1:8000/docs>.
 
-Useful checks:
+If you skip creating `.env`, `DEMO_MODE` defaults to `false` and the API will require `FEATHERLESS_API_KEY` before starting.
+
+## Frontend Development
+
+Run the backend from the repository root as above. In a second terminal:
 
 ```sh
-python -m pytest -q
+cd frontend
+npm ci
+npm run dev
+```
+
+Open <http://localhost:5173>. Vite proxies `/api` and `/health` requests to the backend on port 8000. Node.js 22 is used for the frontend build in Docker.
+
+## Tests And Evaluation
+
+Run the Python unit, API, integration, persistence, and evaluation tests:
+
+```sh
+PYTHON_DOTENV_DISABLED=true python -m pytest -q
+```
+
+This keeps machine-specific values in `.env` from changing test defaults; it does not modify `.env`.
+
+Run the frontend test, TypeScript check, and production build:
+
+```sh
+cd frontend
+npm ci
+npm test
+npm run build
+```
+
+Run the full 150-sample offline benchmark from the repository root:
+
+```sh
 python -m evaluation.runner
 ```
 
+The benchmark forces demo mode and writes reports to `.artifacts/latest_report.json` and `.artifacts/latest_report.md`. These are generated outputs; inspect the new report for current results. Benchmark results are fixture-based and do not establish live threat-detection accuracy.
+
+GitHub Actions currently runs the Python test suite. Frontend tests and build are available locally with the commands above.
+
 ## Configuration
 
-Copy `.env.example` to `.env` for local configuration. `.env` is ignored by Git; never commit credentials or secrets.
+Copy `.env.example` to `.env` before starting the app or using Compose. `.env` is ignored by Git; never commit credentials.
 
-Required production variables include:
+| Variable | Purpose |
+| --- | --- |
+| `DEMO_MODE` | `true` uses offline heuristics; `false` enables Featherless analysis. Defaults to `false` if unset. |
+| `FEATHERLESS_API_KEY` | Required when `DEMO_MODE=false`. |
+| `FEATHERLESS_BASE_URL`, `FEATHERLESS_MODEL` | Provider endpoint and model; defaults are in `.env.example`. |
+| `AGENTBOXD_WEBHOOK_SECRET` | Required to enable signed webhook verification. |
+| `DATABASE_URL` | SQLAlchemy database URL; defaults to local SQLite. Compose stores SQLite data in a named volume. |
+| `CORS_ORIGINS` | Comma-separated browser origins allowed by the API. |
+| `RATE_LIMIT`, `MAX_INPUT_CHARS`, `MAX_REQUEST_BYTES` | Request limits. |
+| `RETENTION_DAYS` | Retention window for saved analyses and webhook metadata. |
+| `RISK_WEIGHT_IDENTITY`, `RISK_WEIGHT_INFRASTRUCTURE`, `RISK_WEIGHT_SOCIAL`, `RISK_WEIGHT_VERIFICATION` | Nonnegative risk weights; their sum must equal 1. |
 
-- `DEMO_MODE`
-- `FEATHERLESS_API_KEY` when demo mode is disabled
-- `FEATHERLESS_BASE_URL`
-- `FEATHERLESS_MODEL`
-- `AGENTBOXD_WEBHOOK_SECRET` for signed webhook verification
+Additional timeout, retry, and logging settings are defined in [config.py](config.py). For live analysis, set `DEMO_MODE=false` and provide a valid `FEATHERLESS_API_KEY`. Configure `AGENTBOXD_WEBHOOK_SECRET` only when accepting signed webhook events. See [docs/FEATHERLESS.md](docs/FEATHERLESS.md) and [docs/AGENTBOXD.md](docs/AGENTBOXD.md).
 
-For local offline work, keep `DEMO_MODE=true` and avoid live provider dependencies.
+## Docker Deployment
 
-## Security notes
-
-- Analyzed content is attacker-controlled and should be treated as untrusted input.
-- Webhook signatures are verified against the documented Agentboxd raw-body contract before parsing.
-- API responses use a safe error envelope and do not expose internal failure details.
-- Request size and request rate are constrained at the ingress layer.
-- URL extraction is offline; the backend does not fetch or validate remote destinations on its own.
-
-See [docs/threat-model.md](docs/threat-model.md) and [docs/architecture.md](docs/architecture.md) for the system boundaries and current assumptions.
-
-## Deployment and CI
-
-A Docker container and a GitHub Actions workflow are included so the repo can be validated in CI and started in a containerized environment.
-
-Docker quick start:
+For a local containerized demo, from the repository root:
 
 ```sh
-docker build -t veriforge .
-docker run --rm -p 8000:8000 --env-file .env veriforge
-```
-
-Compose quick start:
-
-```sh
+test -f .env || cp .env.example .env
 docker compose up --build
 ```
 
-The workflow in `.github/workflows/ci.yml` runs the Python test suite automatically on pushes and pull requests.
+The app is available at <http://127.0.0.1:8000>. Compose defaults to demo mode and persists the SQLite database in the `veriforge-data` named volume. Set `DEMO_MODE=false` and `FEATHERLESS_API_KEY` in `.env` to use the live provider. Stop the app with `docker compose down`; the named database volume remains. To delete the database as well, run `docker compose down --volumes`.
 
-## Submission materials
+To build and run the image without Compose:
 
-The final submission checklist is in [docs/submission-checklist.md](docs/submission-checklist.md).
+```sh
+docker build -t veriforge .
+docker run --rm -p 8000:8000 --env-file .env \
+	-v veriforge-data:/app/data \
+	-e DATABASE_URL=sqlite:////app/data/veriforge.db \
+	veriforge
+```
 
-## Hackathon guidance
+Before exposing this prototype publicly, provide HTTPS through a trusted reverse proxy, authentication and access controls, secret management, database backups, monitoring, and deployment-specific rate limiting. The API does not provide user authentication, and the built-in rate limiter is in-memory and per process. Review [docs/threat-model.md](docs/threat-model.md) before handling real messages.
 
-Project: ForgeHacks 2026, AI + Cybersecurity. Before submission, validate the working deployment, capture screenshots, and provide a short 2–4 minute live walkthrough of the evidence-first workflow without overstating claims about production readiness or security guarantees.
+## Troubleshooting Persistence Errors
+
+If analysis returns `Analysis result could not be persisted`, rebuild and recreate the Compose service:
+
+```sh
+docker compose up --build -d
+curl -fsS http://127.0.0.1:8000/ready
+```
+
+Repeated messages can contain the same stable evidence IDs. Database evidence records are now scoped to their analysis, so repeated analyses no longer collide. This fix keeps existing database rows; do not run `docker compose down --volumes`, which deletes saved history.
+
+## System Flow
+
+Input → normalization → claim extraction → specialist analysis → evidence graph → verification → deterministic risk decision → persistence.
+
+URL extraction is offline: the backend does not fetch or validate remote destinations. The model is not given tools to execute message instructions or access external evidence.
+
+## Project Docs
+
+- [Architecture](docs/architecture.md)
+- [Threat model](docs/threat-model.md)
+- [Evaluation details](docs/evaluation.md)
+- [Submission checklist](docs/submission-checklist.md)
