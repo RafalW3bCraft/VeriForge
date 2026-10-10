@@ -6,13 +6,17 @@ The project includes a FastAPI API, a React/Vite frontend, SQLite analysis histo
 
 ## Quick Start: Local App
 
-Requirements: Python 3.10+ and pip. The commands below are for Linux/macOS; use the equivalent virtual-environment activation command on Windows.
+Requirements: Python 3.10+, pip, and Node.js 22 with npm. The commands below are for Linux/macOS; use the equivalent virtual-environment activation command on Windows.
 
 ```sh
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
 test -f .env || cp .env.example .env
+cd frontend
+npm ci
+npm run build
+cd ..
 uvicorn apps.api.main:app --reload
 ```
 
