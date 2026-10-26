@@ -52,6 +52,56 @@ class Finding(BaseModel):
     evidence: str
     source: str
     confidence: float = Field(ge=0.0, le=1.0)
+    # New work: typed evidence references and inference labeling
+    evidence_ids: list[str] = Field(default_factory=list)
+    is_inference: bool = False
+
+
+class ExternalEvidence(BaseModel):
+    """Typed evidence record from an external source (e.g. Zetaris)."""
+
+    id: str
+    kind: str
+    value: str
+    source: str
+    record_id: str = ""
+    query_ref: str = ""
+    retrieved_at: datetime | None = None
+    observed: bool = True
+    confidence: float = Field(default=1.0, ge=0.0, le=1.0)
+    matched_indicator: str | None = None
+    tags: list[str] = Field(default_factory=list)
+
+
+class MemoryTrace(BaseModel):
+    """An H-MEM memory retrieved during this investigation, with provenance."""
+
+    memory_id: str
+    content: str
+    relevance_score: float = Field(ge=0.0, le=1.0)
+    retrieval_reason: str
+    strategy: str
+    source: str
+    provenance_label: str
+    layer: str
+    confidence: float = Field(ge=0.0, le=1.0)
+    from_investigation_id: str | None = None
+
+
+class IntegrationStatus(BaseModel):
+    """Truthful sponsor-integration health for the UI."""
+
+    name: str
+    status: Literal["available", "unavailable", "failed", "not_configured"]
+    detail: str = ""
+
+
+class Hypothesis(BaseModel):
+    id: str
+    statement: str
+    kind: str
+    outcome: Literal["supported", "contradicted", "unverified", "pending"] = "pending"
+    evidence_ids: list[str] = Field(default_factory=list)
 
 
 class AgentResult(BaseModel):
@@ -145,6 +195,15 @@ class AnalysisResponse(BaseModel):
     agents: AgentResults
     graph: EvidenceGraph
     meta: dict[str, Any] = Field(default_factory=dict)
+    # New work: evidence-linked pipeline extensions (all optional for
+    # backwards compatibility with pre-existing persisted analyses)
+    external_evidence: list[ExternalEvidence] = Field(default_factory=list)
+    memory_traces: list[MemoryTrace] = Field(default_factory=list)
+    hypotheses: list[Hypothesis] = Field(default_factory=list)
+    integration_status: list[IntegrationStatus] = Field(default_factory=list)
+    investigation_steps: list[str] = Field(default_factory=list)
+    incomplete: bool = False
+    incomplete_reason: str | None = None
 
 
 class AnalysisSummary(BaseModel):

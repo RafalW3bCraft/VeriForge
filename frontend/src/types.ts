@@ -16,6 +16,49 @@ export interface Finding {
   evidence: string;
   source: string;
   confidence: number;
+  evidence_ids?: string[];
+  is_inference?: boolean;
+}
+
+export interface ExternalEvidence {
+  id: string;
+  kind: string;
+  value: string;
+  source: string;
+  record_id: string;
+  query_ref: string;
+  retrieved_at?: string | null;
+  observed: boolean;
+  confidence: number;
+  matched_indicator?: string | null;
+  tags: string[];
+}
+
+export interface MemoryTrace {
+  memory_id: string;
+  content: string;
+  relevance_score: number;
+  retrieval_reason: string;
+  strategy: string;
+  source: string;
+  provenance_label: string;
+  layer: string;
+  confidence: number;
+  from_investigation_id?: string | null;
+}
+
+export interface IntegrationStatus {
+  name: string;
+  status: "available" | "unavailable" | "failed" | "not_configured";
+  detail: string;
+}
+
+export interface Hypothesis {
+  id: string;
+  statement: string;
+  kind: string;
+  outcome: "supported" | "contradicted" | "unverified" | "pending";
+  evidence_ids: string[];
 }
 
 export interface GraphNode {
@@ -86,6 +129,18 @@ export interface AnalysisResponse {
   };
   graph: { nodes: GraphNode[]; edges: GraphEdge[] };
   meta: Record<string, unknown>;
+  external_evidence?: ExternalEvidence[];
+  memory_traces?: MemoryTrace[];
+  hypotheses?: Hypothesis[];
+  integration_status?: IntegrationStatus[];
+  investigation_steps?: string[];
+  incomplete?: boolean;
+  incomplete_reason?: string | null;
+}
+
+export interface IntegrationsHealth {
+  zetaris: { status: string; configured: boolean };
+  hmem: { status: string; memories?: Record<string, number>; pending_conflicts?: number } & Record<string, unknown>;
 }
 
 export interface AnalysisSummary {

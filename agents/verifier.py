@@ -20,10 +20,41 @@ async def run_verifier(
             for agent_name, result in agents.items()
             for finding in result["findings"]
         ]
+        # Typed support: prefer explicit evidence_ids on findings; fall back
+        # to exact normalized value equality (not substring) for legacy rows.
+        exact_values = set(evidence_values)
+        valid_evidence_ids = {
+            evidence["id"] for evidence in combined["extraction"]["evidence"]
+        }
+
+        def _candidate_values(finding: dict[str, Any]) -> set[str]:
+            """Exact-match candidates from a finding's evidence reference.
+
+            Handles the legacy formats agents emit: plain value, comma-joined
+            list, and Python list-repr ("['a', 'b']"). Never substring-matches.
+            """
+            text = str(finding["evidence"]).casefold().strip()
+            candidates = {text}
+            candidates |= {p.strip() for p in text.split(",") if p.strip()}
+            if text.startswith("[") and text.endswith("]"):
+                inner = text[1:-1]
+                candidates |= {
+                    p.strip().strip("'\"") for p in inner.split(",") if p.strip()
+                }
+            candidates |= {p.strip("'\"") for p in text.split(",") if p.strip()}
+            return candidates
+
+        def _is_supported(finding: dict[str, Any]) -> bool:
+            ids = finding.get("evidence_ids") or []
+            if ids:
+                return any(eid in valid_evidence_ids for eid in ids)
+            candidates = _candidate_values(finding)
+            return any(value in candidates for value in exact_values)
+
         supported = [
             (agent_name, finding)
             for agent_name, finding in findings
-            if any(value in finding["evidence"].casefold() for value in evidence_values)
+            if _is_supported(finding)
         ]
         unsupported = [
             finding["finding"]

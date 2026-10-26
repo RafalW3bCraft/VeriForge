@@ -1,4 +1,4 @@
-import type { AnalysisListResponse, AnalysisResponse, InputType } from "./types";
+import type { AnalysisListResponse, AnalysisResponse, InputType, IntegrationsHealth } from "./types";
 
 interface ErrorResponse {
   detail?: string;
@@ -40,4 +40,8 @@ export function getAnalysis(analysisId: string) {
 
 export async function getHealth() {
   return request<{ status: string }>("/health");
+}
+
+export function getIntegrationsStatus() {
+  return request<IntegrationsHealth>("/api/v1/integrations/status");
 }

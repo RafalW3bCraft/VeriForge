@@ -73,6 +73,7 @@ class Settings:
     agentboxd_webhook_secret: str | None
     agentboxd_base_url: str
     database_url: str
+    api_key: str | None
     cors_origins: tuple[str, ...]
     rate_limit_per_minute: int
     retention_days: int
@@ -115,6 +116,7 @@ def get_settings() -> Settings:
         agentboxd_webhook_secret=os.getenv("AGENTBOXD_WEBHOOK_SECRET") or None,
         agentboxd_base_url=os.getenv("AGENTBOXD_BASE_URL", "https://api.agentboxd.com"),
         database_url=os.getenv("DATABASE_URL", "sqlite:///./veriforge.db"),
+        api_key=os.getenv("VERIFORGE_API_KEY") or None,
         cors_origins=cors_origins,
         rate_limit_per_minute=_read_positive_int("RATE_LIMIT", 60),
         retention_days=_read_positive_int("RETENTION_DAYS", 30),

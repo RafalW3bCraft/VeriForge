@@ -20,3 +20,4 @@ __pycache__/
 .artifacts/
 latest_report.json
 latest_report.md
+.hmem/

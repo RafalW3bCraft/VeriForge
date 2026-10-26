@@ -5,7 +5,8 @@ from collections import defaultdict, deque
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import BackgroundTasks, FastAPI, HTTPException, Query, Request
+from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, Query, Request
+from fastapi.security import APIKeyHeader
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -177,6 +178,20 @@ def ready():
         raise HTTPException(status_code=503, detail="Database unavailable") from exc
     return {"status": "ready", "service": "veriforge-api", "demo_mode": get_settings().demo_mode}
 
+# Optional API-key authorization for analysis history. When VERIFORGE_API_KEY
+# is set, history endpoints require the X-API-Key header. When unset the
+# deployment is single-user local and history stays open (documented).
+_api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
+
+
+def require_history_access(api_key: str | None = Depends(_api_key_header)) -> None:
+    configured = get_settings().api_key
+    if configured is None:
+        return
+    if api_key != configured:
+        raise HTTPException(status_code=401, detail="Invalid or missing API key")
+
+
 @app.post("/api/v1/analyze", response_model=AnalysisResponse)
 async def analyze_endpoint(req: AnalysisRequest):
     try:
@@ -188,19 +203,41 @@ async def analyze_endpoint(req: AnalysisRequest):
             status_code=503, detail="Analysis result could not be persisted"
         ) from exc
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=str(exc))
+        # Never leak internal exception text to clients (baseline defect)
+        logger.exception("Analysis failed", extra={"input_type": req.input_type})
+        raise HTTPException(status_code=500, detail="Analysis could not be completed") from exc
 
 
 @app.get("/api/v1/analyses", response_model=AnalysisListResponse)
-def list_analyses(limit: int = Query(default=20, ge=1, le=100)):
+def list_analyses(
+    limit: int = Query(default=20, ge=1, le=100),
+    _auth: None = Depends(require_history_access),
+):
     try:
         return {"items": get_database().list_analyses(limit)}
     except PersistenceError as exc:
         raise HTTPException(status_code=503, detail="Analysis history is unavailable") from exc
 
 
+@app.get("/api/v1/integrations/status")
+def integrations_status():
+    """Truthful sponsor-integration health — never mocked."""
+    from integrations.zetaris.client import get_zetaris_client
+    from hmem.engine import get_hmem_engine
+
+    zetaris = get_zetaris_client()
+    hmem_health = get_hmem_engine().health()
+    return {
+        "zetaris": {
+            "status": zetaris.status.value,
+            "configured": zetaris.config.configured,
+        },
+        "hmem": hmem_health,
+    }
+
+
 @app.get("/api/v1/analyses/{analysis_id}", response_model=AnalysisResponse)
-def get_analysis(analysis_id: str):
+def get_analysis(analysis_id: str, _auth: None = Depends(require_history_access)):
     try:
         result = get_database().get_analysis(analysis_id)
     except PersistenceError as exc:

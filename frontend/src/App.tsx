@@ -1,8 +1,32 @@
 import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { Link, NavLink, Route, Routes, useParams } from "react-router-dom";
-import { analyze, getAnalysis, getHealth, listAnalyses } from "./api";
+import { analyze, getAnalysis, getHealth, getIntegrationsStatus, listAnalyses } from "./api";
 import { scenarios } from "./scenarios";
-import type { AnalysisResponse, AnalysisSummary, InputType } from "./types";
+import type { AnalysisResponse, AnalysisSummary, InputType, IntegrationsHealth } from "./types";
+
+function IntegrationBadges({ health }: { health: IntegrationsHealth | null }) {
+  if (!health) {
+    return null;
+  }
+  const zetaris = health.zetaris;
+  const hmem = health.hmem;
+  return (
+    <div className="integration-badges" aria-label="Integration status">
+      <span
+        className={`badge integration-${zetaris.status}`}
+        title={zetaris.configured ? "Zetaris configured" : "Zetaris not configured"}
+      >
+        Zetaris: {zetaris.status}
+      </span>
+      <span
+        className={`badge integration-${hmem.status === "available" ? "available" : "failed"}`}
+        title={hmem.memories ? `memories: ${JSON.stringify(hmem.memories)}` : undefined}
+      >
+        H-MEM: {hmem.status}
+      </span>
+    </div>
+  );
+}
 
 function App() {
   return (
@@ -90,6 +114,7 @@ function DashboardPage() {
   const [history, setHistory] = useState<AnalysisSummary[]>([]);
   const [result, setResult] = useState<AnalysisResponse | null>(null);
   const [status, setStatus] = useState<string>("Checking backend...");
+  const [integrations, setIntegrations] = useState<IntegrationsHealth | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -100,6 +125,12 @@ function DashboardPage() {
         setStatus(`Backend connected (${health.status})`);
       } catch {
         setStatus("Backend unavailable");
+      }
+
+      try {
+        setIntegrations(await getIntegrationsStatus());
+      } catch {
+        setIntegrations(null);
       }
 
       try {
@@ -149,7 +180,10 @@ function DashboardPage() {
             <p className="eyebrow">Signal intake</p>
             <h2>Analyze message</h2>
           </div>
-          <span className="badge badge-info">{status}</span>
+          <div className="status-cluster">
+            <span className="badge badge-info">{status}</span>
+            <IntegrationBadges health={integrations} />
+          </div>
         </div>
 
         <form className="analysis-form" onSubmit={handleAnalyze}>
@@ -214,6 +248,11 @@ function DashboardPage() {
 
         {result ? (
           <div className="result-summary">
+            {result.incomplete ? (
+              <p className="incomplete-banner" role="alert">
+                Incomplete investigation — {result.incomplete_reason ?? "an integration was unavailable"}. Verdict capped below HIGH.
+              </p>
+            ) : null}
             <div className="stat-row">
               <span className="stat-label">Verdict</span>
               <strong className={`verdict verdict-${result.verdict.toLowerCase()}`}>{result.verdict}</strong>
@@ -226,8 +265,73 @@ function DashboardPage() {
               <span className="stat-label">Confidence</span>
               <strong>{(result.confidence * 100).toFixed(0)}%</strong>
             </div>
+            <div className="stat-row">
+              <span className="stat-label">Evidence strength</span>
+              <strong>{(result.risk_decision.evidence_strength * 100).toFixed(0)}%</strong>
+            </div>
+            {result.integration_status?.length ? (
+              <div className="stat-row">
+                <span className="stat-label">Integrations</span>
+                <span>
+                  {result.integration_status.map((s) => (
+                    <span key={s.name} className={`badge integration-${s.status}`} title={s.detail}>
+                      {s.name}: {s.status}
+                    </span>
+                  ))}
+                </span>
+              </div>
+            ) : null}
             <p className="summary-copy">{result.summary}</p>
             <p className="recommendation">{result.recommended_action}</p>
+
+            {result.external_evidence?.length ? (
+              <div className="evidence-panel">
+                <h3>External evidence (Zetaris)</h3>
+                <ul>
+                  {result.external_evidence.map((e) => (
+                    <li key={e.id}>
+                      <strong>{e.value}</strong> via {e.source}
+                      {e.matched_indicator ? ` (matched ${e.matched_indicator})` : ""}
+                      {e.retrieved_at ? ` — retrieved ${new Date(e.retrieved_at).toLocaleString()}` : ""}
+                      {e.record_id ? ` — record ${e.record_id}` : ""}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+
+            {result.memory_traces?.length ? (
+              <div className="evidence-panel">
+                <h3>Memory context (H-MEM)</h3>
+                <ul>
+                  {result.memory_traces.map((t) => (
+                    <li key={t.memory_id}>
+                      <strong>{t.content}</strong>
+                      <small>
+                        {" "}— {t.retrieval_reason}; source {t.source}; layer {t.layer};
+                        relevance {(t.relevance_score * 100).toFixed(0)}%;
+                        {t.from_investigation_id && t.from_investigation_id !== result.analysis_id
+                          ? ` from prior investigation ${t.from_investigation_id.slice(0, 8)}`
+                          : ""}
+                      </small>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+
+            {result.hypotheses?.length ? (
+              <div className="evidence-panel">
+                <h3>Hypotheses</h3>
+                <ul>
+                  {result.hypotheses.map((h) => (
+                    <li key={h.id}>
+                      <span className={`badge hypothesis-${h.outcome}`}>{h.outcome}</span> {h.statement}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
 
             <div className="graph-preview">
               {result.graph.nodes.slice(0, 8).map((node) => (
@@ -383,13 +487,70 @@ function AnalysisPage() {
         <div className="findings-list">
           {analysis.findings.map((finding, index) => (
             <div key={`${finding.finding}-${index}`} className="finding-item">
-              <p className="finding-title">{finding.finding}</p>
+              <p className="finding-title">
+                {finding.finding}
+                {finding.is_inference ? <span className="badge badge-info"> inference</span> : null}
+              </p>
               <p>{finding.evidence}</p>
               <span className={`severity severity-${finding.severity}`}>{finding.severity}</span>
             </div>
           ))}
         </div>
       </section>
+
+      {analysis.agents.verification.contradictions.length ||
+      analysis.agents.verification.unsupported_claims.length ||
+      analysis.external_evidence?.length ||
+      analysis.memory_traces?.length ? (
+        <section className="panel panel-full">
+          <div className="panel-header">
+            <div>
+              <p className="eyebrow">Verification and provenance</p>
+              <h2>Supporting and contradicting evidence</h2>
+            </div>
+          </div>
+          <div className="detail-grid">
+            <div className="detail-card">
+              <h3>Agreements</h3>
+              <ul>{analysis.agents.verification.agreements.map((a) => <li key={a}>{a}</li>)}</ul>
+              <h3>Contradictions</h3>
+              {analysis.agents.verification.contradictions.length ? (
+                <ul>{analysis.agents.verification.contradictions.map((c) => <li key={c}>{c}</li>)}</ul>
+              ) : <p>None detected.</p>}
+              <h3>Unsupported claims</h3>
+              {analysis.agents.verification.unsupported_claims.length ? (
+                <ul>{analysis.agents.verification.unsupported_claims.map((c) => <li key={c}>{c}</li>)}</ul>
+              ) : <p>None.</p>}
+            </div>
+            <div className="detail-card">
+              <h3>External evidence</h3>
+              {analysis.external_evidence?.length ? (
+                <ul>
+                  {analysis.external_evidence.map((e) => (
+                    <li key={e.id}>
+                      {e.value} — {e.source}
+                      {e.retrieved_at ? `, retrieved ${new Date(e.retrieved_at).toLocaleString()}` : ""}
+                    </li>
+                  ))}
+                </ul>
+              ) : <p>No external corroboration for this analysis.</p>}
+              <h3>Reused memory</h3>
+              {analysis.memory_traces?.length ? (
+                <ul>
+                  {analysis.memory_traces.map((t) => (
+                    <li key={t.memory_id}>
+                      {t.content} — {t.provenance_label}
+                      {t.from_investigation_id && t.from_investigation_id !== analysis.analysis_id
+                        ? ` (from investigation ${t.from_investigation_id.slice(0, 8)})`
+                        : ""}
+                    </li>
+                  ))}
+                </ul>
+              ) : <p>No prior memory was reused.</p>}
+            </div>
+          </div>
+        </section>
+      ) : null}
     </main>
   );
 }

@@ -111,6 +111,12 @@ def evaluate_dataset(dataset: list[EvaluationSample] | None = None) -> dict[str,
     observed_labels = [item["observed_label"] for item in results]
     metrics = compute_binary_metrics(expected_labels, observed_labels)
 
+    # Coverage accounting: ambiguous predictions and abstentions are counted
+    # explicitly instead of silently dropped from the metric denominator.
+    evaluated_binary = sum(1 for o in observed_labels if o in {"benign", "malicious"})
+    abstained = len(results) - evaluated_binary
+    coverage = evaluated_binary / len(results) if results else 0.0
+
     category_performance: dict[str, Any] = {}
     for category in ["legitimate", "scam", "impersonation", "ambiguous"]:
         filtered = [item for item in results if item["category"] == category]
@@ -162,6 +168,8 @@ def evaluate_dataset(dataset: list[EvaluationSample] | None = None) -> dict[str,
             "agent_agreement": sum(item["agent_agreement"] for item in results) / len(results) if results else 0.0,
             "verification_consistency": sum(item["verification_consistency"] for item in results) / len(results) if results else 0.0,
             "evidence_coverage": sum(item["evidence_coverage"] for item in results) / len(results) if results else 0.0,
+            "decision_coverage": coverage,
+            "abstained_count": abstained,
         },
         confusion_matrix=confusion,
         per_category=category_performance,
