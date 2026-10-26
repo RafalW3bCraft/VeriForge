@@ -34,15 +34,17 @@ Deadline: 2026-10-27 23:45 UTC (1.8 days remaining at audit time, 2026-10-26 05:
 - `FEATHERLESS_API_KEY`: present
 - H-MEM is a spec + TS reference implementation, not a hosted service: we will implement the contracts in-process (Python) following `AGENTS.md`, which the repo explicitly sanctions ("Implement it in TypeScript, Python, Rust, or whatever stack you ship. The contracts do not change.").
 
-## Phases
+## Phases (all complete)
 
-- P0 AUDIT — done (this file + BASELINE_AND_NEW_WORK.md).
-- P1 Zetaris integration: config layer, SQL-over-HTTP client (documented UI proxy route), template-validated read-only queries, threat-IOC datasets, typed evidence normalization, outage-aware status, unit tests (mocked) + live test gated on `ZETARIS_URL`.
-- P2 Meterless H-MEM: Python implementation of canonical memory record, tiered store, hybrid retrieval with trace, trust ledger, conflict/supersede handling, per-investigation/per-tenant isolation, conformance-style tests.
-- P3 Pipeline upgrade: hypotheses, bounded retrieval, evidence-linked explanation, inference labeling, risk gating on verification (fix D1/D2), step budget + failure handling.
-- P4 Quality fixes: metrics coverage (D3), authorization on history (D4), error leakage (D5), prompt-injection screening + evidence sanitization (D6), architecture doc sync (D10).
-- P5 Frontend: provenance panel, integration status, memory trace, failed/insufficient states.
-- P6 Tests & security review; P7 docs & demo; P8 release verify.
+- P0 AUDIT — DONE (this file + BASELINE_AND_NEW_WORK.md).
+- P1 Zetaris integration — DONE (client, templates, normalization, statuses, 12 tests, live test env-gated).
+- P2 Meterless H-MEM — DONE (`hmem/` engine, 23 contract tests, acceptance gate demonstrated live).
+- P3 Pipeline upgrade — DONE (hypotheses, bounded retrieval, memory context, gated risk, incomplete reporting).
+- P4 Quality fixes — DONE (risk gate, verifier exact-match, benchmark coverage, history auth, error sanitization, injection screening).
+- P5 Frontend — DONE (integration badges, provenance panels, memory trace, hypotheses, incomplete banner).
+- P6 Tests & security review — DONE (119 passed / 1 env-gated skip; secret scan clean).
+- P7 Docs & demo — DONE (10/10 artifacts in docs/hackathon/, README updated).
+- P8 Release verify — DONE (Docker build + run verified; benchmark identical to baseline re-run).
 
 ## Cut list (drops first if time slips)
 
