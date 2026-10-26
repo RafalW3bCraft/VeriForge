@@ -1,8 +1,10 @@
 # VeriForge
 
-VeriForge is a prototype for evidence-first analysis of suspicious messages. It extracts indicators, runs specialist analyses, verifies findings against extracted evidence, and calculates the final risk score deterministically in Python.
+VeriForge is an evidence-first investigation agent for suspicious messages. It extracts indicators, forms explicit hypotheses, corroborates them against external threat data through **Zetaris**, recalls trusted context from its **Meterless H-MEM** memory, runs specialist analyses, verifies which findings are actually supported, and calculates the final risk deterministically in Python — outside the LLM. Every verdict ships with typed evidence references, hypothesis outcomes, memory provenance, and honest incomplete-investigation states when an integration is down.
 
-The project includes a FastAPI API, a React/Vite frontend, SQLite analysis history, a signed Agentboxd webhook endpoint, and an offline evaluation runner. It is not a production-grade security service; do not use its verdicts as the sole basis for security decisions.
+The project includes a FastAPI API, a React/Vite frontend, SQLite analysis history, a signed Agentboxd webhook endpoint, an offline evaluation runner, and the two sponsor integrations. It is not a production-grade security service; do not use its verdicts as the sole basis for security decisions.
+
+Hackathon submission materials (baseline disclosure, integration status, test evidence, demo script) live in [docs/hackathon/](docs/hackathon/).
 
 ## Quick Start: Local App
 
@@ -119,9 +121,16 @@ Repeated messages can contain the same stable evidence IDs. Database evidence re
 
 ## System Flow
 
-Input → normalization → claim extraction → specialist analysis → evidence graph → verification → deterministic risk decision → persistence.
+Input → injection screening → claim extraction → hypotheses → Zetaris correlation → H-MEM recall → specialist analysis → evidence graph → verification → bounded re-retrieval → deterministic risk decision (verification-gated) → persistence + memory updates.
 
-URL extraction is offline: the backend does not fetch or validate remote destinations. The model is not given tools to execute message instructions or access external evidence.
+The backend does not fetch or validate remote URL destinations. The model is not given tools to execute message instructions; message content is screened for prompt injection and injection-flagged content never reaches high-trust memory. Sponsor systems report truthful availability status; investigations degraded by an outage are marked incomplete and their verdicts are capped.
+
+### Sponsor integrations
+
+- **Zetaris** (`integrations/zetaris/`): read-only SQL through the documented UI proxy route. Requires `ZETARIS_BASE_URL` (UI origin), `ZETARIS_ORG_ID`, and `ZETARIS_API_KEY` (or username/password). Without them the app runs offline and reports `zetaris: not_configured` — never a mocked status.
+- **Meterless H-MEM** (`hmem/`): in-process implementation of the official H-MEM contracts — tiered store, hybrid retrieval with trace, trust ledger, conflict detection, tenant/investigation isolation. Persists to `./.hmem/` (override with `HMEM_DATA_DIR`). Dreaming/sleep cycles are documented as not implemented.
+
+History endpoints accept an optional `VERIFORGE_API_KEY` (sent as `X-API-Key`); when unset, history is open for single-user local deployments.
 
 ## Project Docs
 
