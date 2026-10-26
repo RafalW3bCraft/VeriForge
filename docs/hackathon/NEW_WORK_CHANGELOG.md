@@ -1,7 +1,8 @@
-# New Work Changelog (baseline ff32c6c → HEAD 04e83bb)
+# New Work Changelog (baseline ff32c6c → HEAD)
 
-Diff summary: **34 files changed, 3115 insertions(+), 21 deletions(-)** in one
-commit (`04e83bb`). `git diff ff32c6c..HEAD --stat` for the full list.
+Diff summary: **47 files changed, 3744 insertions(+), 25 deletions(-)** across
+3 commits (`04e83bb`, `4bf2eb4`, `0f73d37`). `git diff ff32c6c..HEAD --stat`
+for the full list.
 
 ## New files
 
