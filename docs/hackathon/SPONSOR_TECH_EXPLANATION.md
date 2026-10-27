@@ -12,33 +12,35 @@ uncorroborated ones leave hypotheses explicitly "unverified".
 **How it is connected (documented route only).** Implementation follows
 `zetaris/getting-started` (`scripts/HOWTO.md`, `docs/connections/README.md`):
 
-- Route: HTTP SQL through the **UI proxy** (`POST {ZETARIS_BASE_URL}/api/proxy/query`).
+- Route: HTTP SQL through the **UI proxy** (`POST {ZETARIS_BASE_URL}/api/proxy/query/sql/start`).
   The raw API on port 8888 is deliberately not used.
 - Auth: `Authorization: Bearer $ZETARIS_API_KEY` (or username/password token
   exchange), plus `X-Org-ID` and a fresh UUID `X-Request-ID` per request.
 - Environment: `ZETARIS_BASE_URL` (UI origin), `ZETARIS_ORG_ID`,
   `ZETARIS_API_KEY` or `ZETARIS_USERNAME`/`ZETARIS_PASSWORD`,
-  optional `ZETARIS_QUERY_LIMIT` (default 1000) and `ZETARIS_ENGINE_ID`.
+  `ZETARIS_IOC_DATASOURCE`, IOC columns, optional `ZETARIS_QUERY_LIMIT`
+  (bounded to 250), and `ZETARIS_ENGINE_ID`.
 - 30 s timeout, bounded row limits, no retries on 4xx, controlled retry
   budget on transient failures.
 
 **Safety properties.**
 
-- Only `SELECT`/`SHOW`/`DESCRIBE`/`EXPLAIN` statements pass validation; any
-  write/DDL keyword is rejected before the request is sent.
-- Indicator values are bound through named templates with quote escaping —
-  attacker-controlled message content can never become arbitrary SQL.
+- The client has no general SQL entry point: it emits one fixed `SELECT`
+  template against an administrator-registered, identifier-validated IOC
+  datasource. Write/DDL statements cannot be selected by the UI or caller.
+- The documented proxy accepts `select` text rather than query parameters, so
+  normalized values are safely encoded as SQL literals in that fixed template;
+  they never select identifiers or alter SQL structure.
 - When Zetaris is not configured or unreachable, the client returns an
-  explicit `not_configured`/`unavailable`/`failed` status; the investigation
+  explicit `not_configured`/`degraded`/`failed` status; the investigation
   is marked incomplete and the verdict is capped below HIGH/CRITICAL.
 
-**Live status.** `ZETARIS_API_KEY` is present in the environment;
-`ZETARIS_BASE_URL` (instance UI origin) was not provisioned at submission
-time, so the live acceptance gate (actual query + response against a real
-instance) is pending. This is reported honestly in INTEGRATION_STATUS.md —
-no mocked response is presented as live evidence. Mocked unit tests and the
-outage path are fully green; a live test (`test_zetaris_live_connectivity`)
-runs automatically when `ZETARIS_BASE_URL` and `ZETARIS_ORG_ID` are set.
+**Live status.** No live IOC claim is made. The acceptance gate needs a
+participant-provided UI origin, dedicated read-only identity, and approved IOC
+mapping. This is reported in INTEGRATION_STATUS.md; mocked transport and
+outage tests are not presented as live evidence. The acceptance test runs only
+when `RUN_LIVE_ZETARIS_TESTS=1`, all mapping settings, and either API-key or
+username/password credentials are supplied.
 
 ## Meterless H-MEM (agent memory)
 

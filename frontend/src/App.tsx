@@ -1,558 +1,119 @@
-import { type FormEvent, useEffect, useMemo, useState } from "react";
-import { Link, NavLink, Route, Routes, useParams } from "react-router-dom";
-import { analyze, getAnalysis, getHealth, getIntegrationsStatus, listAnalyses } from "./api";
+import { Component, type ErrorInfo, type FormEvent, type ReactNode, useEffect, useMemo, useState } from "react";
+import { Link, NavLink, Route, Routes, useNavigate, useParams } from "react-router-dom";
+import { analyze, createAdminUser, getAdminAudit, getAdminUsers, getAnalysis, getAuthMode, getCurrentUser, getHealth, getIntegrationsStatus, listAnalyses, login as loginRequest, logout, type AdminUser, type AuditEvent, type CurrentUser } from "./api";
 import { scenarios } from "./scenarios";
-import type { AnalysisResponse, AnalysisSummary, InputType, IntegrationsHealth } from "./types";
+import type { AnalysisResponse, AnalysisSummary, InputType, IntegrationsHealth, Verdict } from "./types";
+
+type BoundaryProps = { children: ReactNode };
+class PageErrorBoundary extends Component<BoundaryProps, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() { return { failed: true }; }
+  componentDidCatch(_error: Error, _info: ErrorInfo) { /* do not expose payloads in the UI */ }
+  render() {
+    return this.state.failed ? <main className="panel error-panel" role="alert"><h2>We could not display this workspace view</h2><p>Refresh the page to try again. Saved investigations have not been changed.</p></main> : this.props.children;
+  }
+}
+
+function Notice({ children, kind = "info" }: { children: ReactNode; kind?: "info" | "error" | "warning" }) {
+  return <p className={`notice notice-${kind}`} role={kind === "error" ? "alert" : "status"} aria-live="polite">{children}</p>;
+}
+function LoadingPanel({ label = "Loading workspace data…" }: { label?: string }) {
+  return <main className="panel loading-panel" aria-busy="true"><span className="skeleton" /><p>{label}</p></main>;
+}
+function formatDate(value: string) { const date = new Date(value); return Number.isNaN(date.getTime()) ? "Unknown time" : date.toLocaleString(); }
+function VerdictBadge({ verdict }: { verdict: Verdict }) { return <span className={`verdict verdict-${verdict.toLowerCase()}`}>{verdict}</span>; }
 
 function IntegrationBadges({ health }: { health: IntegrationsHealth | null }) {
-  if (!health) {
-    return null;
-  }
-  const zetaris = health.zetaris;
-  const hmem = health.hmem;
-  return (
-    <div className="integration-badges" aria-label="Integration status">
-      <span
-        className={`badge integration-${zetaris.status}`}
-        title={zetaris.configured ? "Zetaris configured" : "Zetaris not configured"}
-      >
-        Zetaris: {zetaris.status}
-      </span>
-      <span
-        className={`badge integration-${hmem.status === "available" ? "available" : "failed"}`}
-        title={hmem.memories ? `memories: ${JSON.stringify(hmem.memories)}` : undefined}
-      >
-        H-MEM: {hmem.status}
-      </span>
-    </div>
-  );
+  if (!health) return <span className="badge integration-unknown">Integration status unavailable</span>;
+  return <div className="integration-badges" aria-label="Integration status">
+    <span className={`badge integration-${health.zetaris.status}`} title={health.zetaris.configured ? "Configured connection" : "Not configured"}>Zetaris: {health.zetaris.status}</span>
+    <span className={`badge integration-${health.hmem.status === "available" ? "available" : "failed"}`}>H-MEM: {health.hmem.status}</span>
+  </div>;
+}
+function HistoryRows({ items }: { items: AnalysisSummary[] }) {
+  if (!items.length) return <p className="empty-text">No saved investigations match this view.</p>;
+  return <div className="history-list">{items.map((item) => <Link key={item.analysis_id} to={`/analysis/${encodeURIComponent(item.analysis_id)}`} className="history-item" aria-label={`Open ${item.verdict} investigation from ${formatDate(item.created_at)}`}>
+    <VerdictBadge verdict={item.verdict} /><div><strong>{item.input_type}</strong><small>{formatDate(item.created_at)}</small><span>{item.summary}</span></div><span className="score-badge" aria-label={`Risk score ${Math.round(item.score)}`}>{Math.round(item.score)}</span>
+  </Link>)}</div>;
 }
 
 function App() {
-  return (
-    <div className="app-shell">
-      <header className="topbar">
-        <div>
-          <p className="eyebrow">Threat intelligence workspace</p>
-          <h1>VeriForge</h1>
-        </div>
-        <nav className="nav">
-          <NavLink to="/" end>
-            Dashboard
-          </NavLink>
-          <NavLink to="/history">History</NavLink>
-        </nav>
-      </header>
-
-      <Routes>
-        <Route path="/" element={<DashboardPage />} />
-        <Route path="/history" element={<HistoryPage />} />
-        <Route path="/analysis/:analysisId" element={<AnalysisPage />} />
-      </Routes>
-    </div>
-  );
+  const [accountsEnabled, setAccountsEnabled] = useState(false);
+  const [authReady, setAuthReady] = useState(false);
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
+  useEffect(() => { void (async () => { try { const mode = await getAuthMode(); setAccountsEnabled(mode.accounts_enabled); if (mode.accounts_enabled) setCurrentUser(await getCurrentUser()); } catch { setAccountsEnabled(true); } finally { setAuthReady(true); } })(); }, []);
+  if (!authReady) return <LoadingPanel label="Checking workspace access…" />;
+  if (accountsEnabled && !currentUser) return <LoginPage onAuthenticated={setCurrentUser} />;
+  return <div className="app-shell"><a className="skip-link" href="#main-content">Skip to main content</a>
+    <header className="topbar"><div><p className="eyebrow">Threat intelligence workspace</p><h1>VeriForge</h1></div><nav className="nav" aria-label="Primary navigation"><NavLink to="/" end>Dashboard</NavLink><NavLink to="/new">New investigation</NavLink><NavLink to="/history">History</NavLink><NavLink to="/help">Help</NavLink>{currentUser?.role === "admin" ? <NavLink to="/admin">Administration</NavLink> : null}{currentUser?.role === "admin" ? <span className="badge badge-info">Admin</span> : null}{currentUser ? <button className="quiet-button" type="button" onClick={() => { void logout().finally(() => setCurrentUser(null)); }}>Sign out</button> : null}</nav></header>
+    <PageErrorBoundary><Routes><Route path="/" element={<DashboardPage />} /><Route path="/new" element={<NewInvestigationPage />} /><Route path="/history" element={<HistoryPage />} /><Route path="/analysis/:analysisId" element={<AnalysisPage />} /><Route path="/help" element={<HelpPage />} />{currentUser?.role === "admin" ? <Route path="/admin" element={<AdminPage />} /> : null}<Route path="*" element={<NotFoundPage />} /></Routes></PageErrorBoundary>
+  </div>;
 }
 
-function HistoryPage() {
-  const [items, setItems] = useState<AnalysisSummary[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadHistory = async () => {
-      try {
-        const result = await listAnalyses(20);
-        setItems(result.items);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Unable to load history.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    void loadHistory();
-  }, []);
-
-  if (loading) {
-    return <main className="panel"><p>Loading analysis history…</p></main>;
-  }
-
-  if (error) {
-    return <main className="panel"><p>{error}</p></main>;
-  }
-
-  return (
-    <main className="page-grid">
-      <section className="panel panel-full">
-        <div className="panel-header">
-          <div>
-            <p className="eyebrow">History</p>
-            <h2>Saved analyses</h2>
-          </div>
-          <Link to="/" className="secondary-link">Back to dashboard</Link>
-        </div>
-        <div className="history-list">
-          {items.length ? items.map((item) => (
-            <Link key={item.analysis_id} to={`/analysis/${item.analysis_id}`} className="history-item">
-              <span className={`verdict verdict-${item.verdict.toLowerCase()}`}>{item.verdict}</span>
-              <div>
-                <strong>{item.input_type}</strong>
-                <small>{new Date(item.created_at).toLocaleString()}</small>
-              </div>
-              <span className="score-badge">{Math.round(item.score)}</span>
-            </Link>
-          )) : <p className="empty-text">No analyses saved yet.</p>}
-        </div>
-      </section>
-    </main>
-  );
+function LoginPage({ onAuthenticated }: { onAuthenticated: (user: CurrentUser) => void }) {
+  const [username, setUsername] = useState(""); const [password, setPassword] = useState(""); const [error, setError] = useState<string | null>(null); const [submitting, setSubmitting] = useState(false);
+  const submit = async (event: FormEvent<HTMLFormElement>) => { event.preventDefault(); try { setSubmitting(true); setError(null); onAuthenticated(await loginRequest(username, password)); } catch (err) { setError(err instanceof Error ? err.message : "Unable to sign in."); } finally { setSubmitting(false); } };
+  return <main className="login-shell" id="main-content"><section className="panel login-panel"><p className="eyebrow">Secure local workspace</p><h1>Sign in to VeriForge</h1><p className="muted-copy">Accounts are provisioned by your administrator. There is no public registration.</p><form className="analysis-form" onSubmit={submit}><div className="field-row"><label htmlFor="login-username">Username</label><input id="login-username" autoComplete="username" value={username} onChange={(event) => setUsername(event.target.value)} required /></div><div className="field-row"><label htmlFor="login-password">Password</label><input id="login-password" type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required /></div><button className="primary-button" disabled={submitting}>{submitting ? "Signing in…" : "Sign in"}</button>{error ? <Notice kind="error">{error}</Notice> : null}</form></section></main>;
 }
 
 function DashboardPage() {
-  const [content, setContent] = useState(scenarios[0].content);
-  const [inputType, setInputType] = useState<InputType>("message");
   const [history, setHistory] = useState<AnalysisSummary[]>([]);
-  const [result, setResult] = useState<AnalysisResponse | null>(null);
-  const [status, setStatus] = useState<string>("Checking backend...");
+  const [status, setStatus] = useState("Checking backend…");
   const [integrations, setIntegrations] = useState<IntegrationsHealth | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const loadDashboard = async () => {
-      try {
-        const health = await getHealth();
-        setStatus(`Backend connected (${health.status})`);
-      } catch {
-        setStatus("Backend unavailable");
-      }
-
-      try {
-        setIntegrations(await getIntegrationsStatus());
-      } catch {
-        setIntegrations(null);
-      }
-
-      try {
-        const list = await listAnalyses(10);
-        setHistory(list.items);
-      } catch {
-        setHistory([]);
-      }
-    };
-
-    void loadDashboard();
-  }, []);
-
-  const handleAnalyze = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (!content.trim()) {
-      setError("Please provide message content to analyze.");
-      return;
-    }
-
-    try {
-      setIsSubmitting(true);
-      setError(null);
-      const analysis = await analyze(content, inputType);
-      setResult(analysis);
-      const nextSummary: AnalysisSummary = {
-        analysis_id: analysis.analysis_id,
-        created_at: analysis.created_at,
-        input_type: analysis.input_type,
-        score: analysis.score,
-        verdict: analysis.verdict,
-        summary: analysis.summary,
-      };
-      setHistory((current) => [nextSummary, ...current.filter((item) => item.analysis_id !== analysis.analysis_id)]);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Analysis request failed.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  return (
-    <main className="page-grid">
-      <section className="panel panel-main">
-        <div className="panel-header">
-          <div>
-            <p className="eyebrow">Signal intake</p>
-            <h2>Analyze message</h2>
-          </div>
-          <div className="status-cluster">
-            <span className="badge badge-info">{status}</span>
-            <IntegrationBadges health={integrations} />
-          </div>
-        </div>
-
-        <form className="analysis-form" onSubmit={handleAnalyze}>
-          <div className="field-row">
-            <label htmlFor="input-type">Input type</label>
-            <select
-              id="input-type"
-              value={inputType}
-              onChange={(event) => setInputType(event.target.value as InputType)}
-            >
-              <option value="message">Message</option>
-              <option value="email">Email</option>
-              <option value="url">URL</option>
-            </select>
-          </div>
-
-          <div className="field-row">
-            <label htmlFor="message-content">Message content</label>
-            <textarea
-              id="message-content"
-              aria-label="Message content"
-              rows={10}
-              value={content}
-              onChange={(event) => setContent(event.target.value)}
-              placeholder="Paste a suspicious message or email here..."
-            />
-          </div>
-
-          <div className="scenario-list">
-            {scenarios.map((scenario) => (
-              <button
-                key={scenario.id}
-                type="button"
-                className="scenario-button"
-                onClick={() => {
-                  setContent(scenario.content);
-                  setInputType(scenario.type);
-                }}
-              >
-                {scenario.name}
-              </button>
-            ))}
-          </div>
-
-          <div className="action-row">
-            <button type="submit" className="primary-button" disabled={isSubmitting}>
-              {isSubmitting ? "Analyzing..." : "Analyze message"}
-            </button>
-          </div>
-
-          {error ? <p className="error-text">{error}</p> : null}
-        </form>
-      </section>
-
-      <section className="panel panel-result">
-        <div className="panel-header">
-          <div>
-            <p className="eyebrow">Latest result</p>
-            <h2>Risk overview</h2>
-          </div>
-        </div>
-
-        {result ? (
-          <div className="result-summary">
-            {result.incomplete ? (
-              <p className="incomplete-banner" role="alert">
-                Incomplete investigation — {result.incomplete_reason ?? "an integration was unavailable"}. Verdict capped below HIGH.
-              </p>
-            ) : null}
-            <div className="stat-row">
-              <span className="stat-label">Verdict</span>
-              <strong className={`verdict verdict-${result.verdict.toLowerCase()}`}>{result.verdict}</strong>
-            </div>
-            <div className="stat-row">
-              <span className="stat-label">Risk score</span>
-              <strong>{Math.round(result.risk_decision.risk_score)}</strong>
-            </div>
-            <div className="stat-row">
-              <span className="stat-label">Confidence</span>
-              <strong>{(result.confidence * 100).toFixed(0)}%</strong>
-            </div>
-            <div className="stat-row">
-              <span className="stat-label">Evidence strength</span>
-              <strong>{(result.risk_decision.evidence_strength * 100).toFixed(0)}%</strong>
-            </div>
-            {result.integration_status?.length ? (
-              <div className="stat-row">
-                <span className="stat-label">Integrations</span>
-                <span>
-                  {result.integration_status.map((s) => (
-                    <span key={s.name} className={`badge integration-${s.status}`} title={s.detail}>
-                      {s.name}: {s.status}
-                    </span>
-                  ))}
-                </span>
-              </div>
-            ) : null}
-            <p className="summary-copy">{result.summary}</p>
-            <p className="recommendation">{result.recommended_action}</p>
-
-            {result.external_evidence?.length ? (
-              <div className="evidence-panel">
-                <h3>External evidence (Zetaris)</h3>
-                <ul>
-                  {result.external_evidence.map((e) => (
-                    <li key={e.id}>
-                      <strong>{e.value}</strong> via {e.source}
-                      {e.matched_indicator ? ` (matched ${e.matched_indicator})` : ""}
-                      {e.retrieved_at ? ` — retrieved ${new Date(e.retrieved_at).toLocaleString()}` : ""}
-                      {e.record_id ? ` — record ${e.record_id}` : ""}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ) : null}
-
-            {result.memory_traces?.length ? (
-              <div className="evidence-panel">
-                <h3>Memory context (H-MEM)</h3>
-                <ul>
-                  {result.memory_traces.map((t) => (
-                    <li key={t.memory_id}>
-                      <strong>{t.content}</strong>
-                      <small>
-                        {" "}— {t.retrieval_reason}; source {t.source}; layer {t.layer};
-                        relevance {(t.relevance_score * 100).toFixed(0)}%;
-                        {t.from_investigation_id && t.from_investigation_id !== result.analysis_id
-                          ? ` from prior investigation ${t.from_investigation_id.slice(0, 8)}`
-                          : ""}
-                      </small>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ) : null}
-
-            {result.hypotheses?.length ? (
-              <div className="evidence-panel">
-                <h3>Hypotheses</h3>
-                <ul>
-                  {result.hypotheses.map((h) => (
-                    <li key={h.id}>
-                      <span className={`badge hypothesis-${h.outcome}`}>{h.outcome}</span> {h.statement}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ) : null}
-
-            <div className="graph-preview">
-              {result.graph.nodes.slice(0, 8).map((node) => (
-                <span key={node.id} className="node-pill" title={node.type}>
-                  {node.label}
-                </span>
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div className="empty-state">
-            <p>No analysis has been run yet.</p>
-            <p>Use a sample phishing message or paste a real threat report to start.</p>
-          </div>
-        )}
-      </section>
-
-      <section className="panel panel-history">
-        <div className="panel-header">
-          <div>
-            <p className="eyebrow">History</p>
-            <h2>Saved analyses</h2>
-          </div>
-        </div>
-
-        <div className="history-list">
-          {history.length ? (
-            history.map((item) => (
-              <Link key={item.analysis_id} to={`/analysis/${item.analysis_id}`} className="history-item">
-                <span className={`verdict verdict-${item.verdict.toLowerCase()}`}>{item.verdict}</span>
-                <div>
-                  <strong>{item.input_type}</strong>
-                  <small>{new Date(item.created_at).toLocaleString()}</small>
-                </div>
-                <span className="score-badge">{Math.round(item.score)}</span>
-              </Link>
-            ))
-          ) : (
-            <p className="empty-text">No saved analyses yet.</p>
-          )}
-        </div>
-      </section>
-    </main>
-  );
+  useEffect(() => { void (async () => { try { setStatus(`Backend connected (${(await getHealth()).status})`); } catch { setStatus("Backend unavailable"); } try { setIntegrations(await getIntegrationsStatus()); } catch { setIntegrations(null); } try { setHistory((await listAnalyses(5)).items); } catch { setHistory([]); } })(); }, []);
+  return <main id="main-content" className="page-grid">
+    <section className="panel panel-main"><div className="panel-header"><div><p className="eyebrow">Investigation workspace</p><h2>Make a defensible decision</h2></div><span className="badge badge-info" role="status">{status}</span></div><p className="summary-copy">Submit a message, email, or URL. VeriForge keeps source context and clearly labels incomplete enrichment so you can distinguish evidence from uncertainty.</p><div className="dashboard-actions"><Link className="primary-button" to="/new">Start an investigation</Link><Link className="secondary-link" to="/help">Read the analyst guide</Link></div><h3 className="subheading">How it works</h3><ol className="steps-list"><li>Paste the suspicious content and identify its type.</li><li>Review the verdict, evidence, and provider limitations.</li><li>Open the saved report to explore provenance or export it.</li></ol></section>
+    <section className="panel panel-result"><div className="panel-header"><div><p className="eyebrow">Environment</p><h2>Integration health</h2></div></div><IntegrationBadges health={integrations} /><p className="muted-copy">An unavailable provider means corroboration was not obtained; it is not evidence of safety.</p></section>
+    <section className="panel panel-history"><div className="panel-header"><div><p className="eyebrow">Recent work</p><h2>Saved investigations</h2></div><Link className="secondary-link" to="/history">View all</Link></div><HistoryRows items={history} /></section>
+  </main>;
 }
+
+function NewInvestigationPage() {
+  const navigate = useNavigate(); const [content, setContent] = useState(scenarios[0].content); const [inputType, setInputType] = useState<InputType>("message"); const [isSubmitting, setIsSubmitting] = useState(false); const [error, setError] = useState<string | null>(null);
+  const handleAnalyze = async (event: FormEvent<HTMLFormElement>) => { event.preventDefault(); if (!content.trim()) { setError("Provide content before starting an investigation."); return; } try { setIsSubmitting(true); setError(null); const result = await analyze(content.trim(), inputType); navigate(`/analysis/${encodeURIComponent(result.analysis_id)}`); } catch (err) { setError(err instanceof Error ? err.message : "Analysis request failed. Try again."); } finally { setIsSubmitting(false); } };
+  return <main id="main-content" className="page-grid"><section className="panel panel-full"><div className="panel-header"><div><p className="eyebrow">Guided intake</p><h2>New investigation</h2></div><Link className="secondary-link" to="/help">What can I submit?</Link></div><form className="analysis-form" onSubmit={handleAnalyze} noValidate>
+    <div className="field-row"><label htmlFor="input-type">What are you investigating?</label><select id="input-type" value={inputType} onChange={(event) => setInputType(event.target.value as InputType)}><option value="message">Message or chat</option><option value="email">Email</option><option value="url">URL</option></select></div>
+    <div className="field-row"><label htmlFor="message-content">Content to analyze</label><p id="content-help" className="field-help">Paste only material needed for the investigation. Do not include passwords or other secrets.</p><textarea id="message-content" aria-describedby="content-help" rows={10} value={content} onChange={(event) => setContent(event.target.value)} placeholder="Paste a suspicious message, email, or URL…" /></div>
+    <fieldset className="scenario-fieldset"><legend>Practice samples</legend><div className="scenario-list">{scenarios.map((scenario) => <button key={scenario.id} type="button" className="scenario-button" onClick={() => { setContent(scenario.content); setInputType(scenario.type); }}>{scenario.name}</button>)}</div></fieldset>
+    <div className="action-row"><button type="submit" className="primary-button" disabled={isSubmitting}>{isSubmitting ? "Analyzing…" : "Analyze content"}</button></div>{error ? <Notice kind="error">{error}</Notice> : null}
+  </form></section></main>;
+}
+
+function HistoryPage() {
+  const [items, setItems] = useState<AnalysisSummary[]>([]); const [loading, setLoading] = useState(true); const [error, setError] = useState<string | null>(null); const [query, setQuery] = useState(""); const [verdict, setVerdict] = useState<"all" | Verdict>("all"); const [refreshKey, setRefreshKey] = useState(0);
+  useEffect(() => { void (async () => { setLoading(true); setError(null); try { setItems((await listAnalyses(100)).items); } catch (err) { setError(err instanceof Error ? err.message : "Unable to load history."); } finally { setLoading(false); } })(); }, [refreshKey]);
+  const filtered = useMemo(() => items.filter((item) => (verdict === "all" || item.verdict === verdict) && `${item.input_type} ${item.summary} ${item.verdict}`.toLowerCase().includes(query.toLowerCase().trim())), [items, query, verdict]);
+  if (loading) return <LoadingPanel label="Loading saved investigations…" />;
+  return <main id="main-content" className="page-grid"><section className="panel panel-full"><div className="panel-header"><div><p className="eyebrow">History</p><h2>Saved investigations</h2></div><button className="quiet-button" type="button" onClick={() => setRefreshKey((value) => value + 1)}>Refresh</button></div>{error ? <Notice kind="error">{error}</Notice> : <><div className="filter-row"><div className="field-row"><label htmlFor="history-search">Search reports</label><input id="history-search" type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search summary or type" /></div><div className="field-row"><label htmlFor="verdict-filter">Verdict</label><select id="verdict-filter" value={verdict} onChange={(event) => setVerdict(event.target.value as "all" | Verdict)}><option value="all">All verdicts</option>{(["SAFE", "LOW", "SUSPICIOUS", "HIGH", "CRITICAL"] as Verdict[]).map((value) => <option key={value} value={value}>{value}</option>)}</select></div></div><p className="result-count" aria-live="polite">{filtered.length} of {items.length} investigations shown</p><HistoryRows items={filtered} /></>}</section></main>;
+}
+
+function AdminPage() {
+  const [users, setUsers] = useState<AdminUser[]>([]); const [events, setEvents] = useState<AuditEvent[]>([]); const [health, setHealth] = useState<IntegrationsHealth | null>(null); const [error, setError] = useState<string | null>(null); const [username, setUsername] = useState(""); const [password, setPassword] = useState(""); const [role, setRole] = useState<AdminUser["role"]>("analyst"); const [creating, setCreating] = useState(false);
+  const reload = async () => { try { setError(null); const [userData, auditData, healthData] = await Promise.all([getAdminUsers(), getAdminAudit(), getIntegrationsStatus()]); setUsers(userData.items); setEvents(auditData.items); setHealth(healthData); } catch (err) { setError(err instanceof Error ? err.message : "Unable to load administration data."); } };
+  useEffect(() => { void reload(); }, []);
+  const submit = async (event: FormEvent<HTMLFormElement>) => { event.preventDefault(); try { setCreating(true); setError(null); await createAdminUser(username, password, role); setUsername(""); setPassword(""); await reload(); } catch (err) { setError(err instanceof Error ? err.message : "Unable to create account."); } finally { setCreating(false); } };
+  return <main id="main-content" className="page-grid"><section className="panel panel-full"><div className="panel-header"><div><p className="eyebrow">Tenant administration</p><h2>Accounts and provider health</h2></div><button className="quiet-button" type="button" onClick={() => void reload()}>Refresh</button></div>{error ? <Notice kind="error">{error}</Notice> : null}<IntegrationBadges health={health} /><p className="muted-copy">Datasource credentials and mappings are runtime configuration only; this view deliberately never exposes or edits secrets.</p></section><section className="panel"><p className="eyebrow">Provision account</p><h2>Create local user</h2><form className="analysis-form" onSubmit={submit}><div className="field-row"><label htmlFor="admin-username">Username</label><input id="admin-username" value={username} onChange={(event) => setUsername(event.target.value)} minLength={3} required /></div><div className="field-row"><label htmlFor="admin-password">Temporary password</label><input id="admin-password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} minLength={12} required /></div><div className="field-row"><label htmlFor="admin-role">Role</label><select id="admin-role" value={role} onChange={(event) => setRole(event.target.value as AdminUser["role"])}><option value="analyst">Analyst</option><option value="viewer">Viewer</option><option value="admin">Administrator</option></select></div><button className="primary-button" disabled={creating}>{creating ? "Creating…" : "Create account"}</button></form></section><section className="panel"><p className="eyebrow">Tenant users</p><h2>Provisioned accounts</h2><div className="table-scroll"><table><caption>Local users visible to this tenant administrator</caption><thead><tr><th>Username</th><th>Role</th><th>Status</th></tr></thead><tbody>{users.length ? users.map((user) => <tr key={user.id}><td>{user.username}</td><td>{user.role}</td><td>{user.active ? "Active" : "Inactive"}</td></tr>) : <tr><td colSpan={3}>No users found.</td></tr>}</tbody></table></div></section><section className="panel panel-full"><p className="eyebrow">Redacted audit trail</p><h2>Recent security-relevant activity</h2><div className="table-scroll"><table><caption>Metadata only; request contents and secrets are excluded.</caption><thead><tr><th>When</th><th>Action</th><th>Resource</th></tr></thead><tbody>{events.length ? events.map((item) => <tr key={item.id}><td>{formatDate(item.created_at)}</td><td>{item.action}</td><td>{item.resource_type}{item.resource_id ? ` · ${item.resource_id}` : ""}</td></tr>) : <tr><td colSpan={3}>No auditable events are available.</td></tr>}</tbody></table></div></section></main>;
+}
+
+function EvidenceExplorer({ analysis }: { analysis: AnalysisResponse }) {
+  const [view, setView] = useState<"table" | "graph">("table"); const evidence = analysis.extraction.evidence;
+  return <section className="panel panel-full"><div className="panel-header"><div><p className="eyebrow">Evidence explorer</p><h2>Claims and relationships</h2></div><div role="tablist" aria-label="Evidence view" className="tab-list"><button type="button" role="tab" id="evidence-table-tab" aria-selected={view === "table"} aria-controls="evidence-table" className={view === "table" ? "active" : ""} onClick={() => setView("table")}>Evidence table</button><button type="button" role="tab" id="evidence-graph-tab" aria-selected={view === "graph"} aria-controls="evidence-graph" className={view === "graph" ? "active" : ""} onClick={() => setView("graph")}>Relationship view</button></div></div>
+    {view === "table" ? <div id="evidence-table" role="tabpanel" aria-labelledby="evidence-table-tab" className="table-scroll"><table><caption>Observed indicators and their provenance</caption><thead><tr><th>Indicator</th><th>Kind</th><th>Source</th><th>Observed</th></tr></thead><tbody>{evidence.length ? evidence.map((item) => <tr key={item.id}><td>{item.value}</td><td>{item.kind}</td><td>{item.source}</td><td>{item.observed ? "Yes" : "No"}</td></tr>) : <tr><td colSpan={4}>No extracted evidence is available for this report.</td></tr>}</tbody></table></div> : <div id="evidence-graph" role="tabpanel" aria-labelledby="evidence-graph-tab"><div className="graph-grid">{analysis.graph.nodes.length ? analysis.graph.nodes.map((node) => <div key={node.id} className="graph-node"><strong>{node.label}</strong><span>{node.type}</span></div>) : <p className="empty-text">No relationship nodes are available.</p>}</div><div className="edge-list">{analysis.graph.edges.map((edge, index) => <div key={`${edge.source}-${edge.target}-${index}`} className="graph-edge"><span>{edge.source}</span><span className="relation">{edge.relation}</span><span>{edge.target}</span></div>)}</div></div>}
+  </section>;
+}
+function downloadReport(analysis: AnalysisResponse) { const blob = new Blob([JSON.stringify(analysis, null, 2)], { type: "application/json" }); const url = URL.createObjectURL(blob); const anchor = document.createElement("a"); anchor.href = url; anchor.download = `veriforge-${analysis.analysis_id}.json`; anchor.click(); URL.revokeObjectURL(url); }
 
 function AnalysisPage() {
-  const { analysisId } = useParams();
-  const [analysis, setAnalysis] = useState<AnalysisResponse | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!analysisId) {
-      setError("Missing analysis identifier.");
-      setLoading(false);
-      return;
-    }
-
-    const loadAnalysis = async () => {
-      try {
-        setLoading(true);
-        const result = await getAnalysis(analysisId);
-        setAnalysis(result);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Unable to fetch analysis.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    void loadAnalysis();
-  }, [analysisId]);
-
-  const graph = useMemo(() => analysis?.graph ?? { nodes: [], edges: [] }, [analysis]);
-
-  if (loading) {
-    return <div className="panel"><p>Loading response…</p></div>;
-  }
-
-  if (error || !analysis) {
-    return <div className="panel"><p>{error ?? "Analysis not found."}</p></div>;
-  }
-
-  return (
-    <main className="analysis-page">
-      <section className="panel panel-full">
-        <div className="panel-header">
-          <div>
-            <p className="eyebrow">Evidence report</p>
-            <h2>{analysis.summary}</h2>
-          </div>
-          <Link to="/" className="secondary-link">Back to dashboard</Link>
-        </div>
-
-        <div className="detail-grid">
-          <div className="detail-card">
-            <h3>Decision</h3>
-            <p className="stat-value">{analysis.verdict}</p>
-            <p>Risk score: {Math.round(analysis.risk_decision.risk_score)}</p>
-            <p>Evidence strength: {(analysis.risk_decision.evidence_strength * 100).toFixed(0)}%</p>
-            <p>{analysis.recommended_action}</p>
-          </div>
-
-          <div className="detail-card">
-            <h3>Extraction</h3>
-            <ul>
-              {analysis.extraction.urls.length ? <li>URLs: {analysis.extraction.urls.join(", ")}</li> : <li>No URLs extracted.</li>}
-              {analysis.extraction.domains.length ? <li>Domains: {analysis.extraction.domains.join(", ")}</li> : null}
-              {analysis.extraction.emails.length ? <li>Emails: {analysis.extraction.emails.join(", ")}</li> : null}
-              {analysis.extraction.credential_terms.length ? <li>Credential terms: {analysis.extraction.credential_terms.join(", ")}</li> : null}
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section className="panel panel-full">
-        <div className="panel-header">
-          <div>
-            <p className="eyebrow">Evidence graph</p>
-            <h2>Claim relationships</h2>
-          </div>
-        </div>
-
-        <div className="graph-grid">
-          {graph.nodes.map((node) => (
-            <div key={node.id} className="graph-node">
-              <strong>{node.label}</strong>
-              <span>{node.type}</span>
-            </div>
-          ))}
-        </div>
-
-        <div className="edge-list">
-          {graph.edges.map((edge, index) => (
-            <div key={`${edge.source}-${edge.target}-${index}`} className="graph-edge">
-              <span>{edge.source}</span>
-              <span className="relation">{edge.relation}</span>
-              <span>{edge.target}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="panel panel-full">
-        <div className="panel-header">
-          <div>
-            <p className="eyebrow">Findings</p>
-            <h2>Agent observations</h2>
-          </div>
-        </div>
-
-        <div className="findings-list">
-          {analysis.findings.map((finding, index) => (
-            <div key={`${finding.finding}-${index}`} className="finding-item">
-              <p className="finding-title">
-                {finding.finding}
-                {finding.is_inference ? <span className="badge badge-info"> inference</span> : null}
-              </p>
-              <p>{finding.evidence}</p>
-              <span className={`severity severity-${finding.severity}`}>{finding.severity}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {analysis.agents.verification.contradictions.length ||
-      analysis.agents.verification.unsupported_claims.length ||
-      analysis.external_evidence?.length ||
-      analysis.memory_traces?.length ? (
-        <section className="panel panel-full">
-          <div className="panel-header">
-            <div>
-              <p className="eyebrow">Verification and provenance</p>
-              <h2>Supporting and contradicting evidence</h2>
-            </div>
-          </div>
-          <div className="detail-grid">
-            <div className="detail-card">
-              <h3>Agreements</h3>
-              <ul>{analysis.agents.verification.agreements.map((a) => <li key={a}>{a}</li>)}</ul>
-              <h3>Contradictions</h3>
-              {analysis.agents.verification.contradictions.length ? (
-                <ul>{analysis.agents.verification.contradictions.map((c) => <li key={c}>{c}</li>)}</ul>
-              ) : <p>None detected.</p>}
-              <h3>Unsupported claims</h3>
-              {analysis.agents.verification.unsupported_claims.length ? (
-                <ul>{analysis.agents.verification.unsupported_claims.map((c) => <li key={c}>{c}</li>)}</ul>
-              ) : <p>None.</p>}
-            </div>
-            <div className="detail-card">
-              <h3>External evidence</h3>
-              {analysis.external_evidence?.length ? (
-                <ul>
-                  {analysis.external_evidence.map((e) => (
-                    <li key={e.id}>
-                      {e.value} — {e.source}
-                      {e.retrieved_at ? `, retrieved ${new Date(e.retrieved_at).toLocaleString()}` : ""}
-                    </li>
-                  ))}
-                </ul>
-              ) : <p>No external corroboration for this analysis.</p>}
-              <h3>Reused memory</h3>
-              {analysis.memory_traces?.length ? (
-                <ul>
-                  {analysis.memory_traces.map((t) => (
-                    <li key={t.memory_id}>
-                      {t.content} — {t.provenance_label}
-                      {t.from_investigation_id && t.from_investigation_id !== analysis.analysis_id
-                        ? ` (from investigation ${t.from_investigation_id.slice(0, 8)})`
-                        : ""}
-                    </li>
-                  ))}
-                </ul>
-              ) : <p>No prior memory was reused.</p>}
-            </div>
-          </div>
-        </section>
-      ) : null}
-    </main>
-  );
+  const { analysisId } = useParams(); const [analysis, setAnalysis] = useState<AnalysisResponse | null>(null); const [loading, setLoading] = useState(true); const [error, setError] = useState<string | null>(null);
+  useEffect(() => { if (!analysisId) { setError("Missing investigation identifier."); setLoading(false); return; } void (async () => { setLoading(true); try { setAnalysis(await getAnalysis(analysisId)); } catch (err) { setError(err instanceof Error ? err.message : "Unable to fetch this investigation."); } finally { setLoading(false); } })(); }, [analysisId]);
+  if (loading) return <LoadingPanel label="Loading investigation report…" />;
+  if (error || !analysis) return <main id="main-content" className="panel error-panel"><Notice kind="error">{error ?? "Investigation not found."}</Notice><Link className="secondary-link" to="/history">Return to history</Link></main>;
+  const verification = analysis.agents.verification;
+  return <main id="main-content" className="analysis-page"><section className="panel panel-full"><div className="panel-header"><div><p className="eyebrow">Evidence report</p><h2>{analysis.summary}</h2></div><div className="report-actions"><button type="button" className="quiet-button" onClick={() => downloadReport(analysis)}>Download JSON</button><button type="button" className="quiet-button" onClick={() => window.print()}>Print report</button></div></div>{analysis.incomplete ? <Notice kind="warning">Incomplete investigation: {analysis.incomplete_reason ?? "required enrichment was unavailable"}. Treat external corroboration as unavailable, not negative.</Notice> : null}<div className="detail-grid"><div className="detail-card"><h3>Decision</h3><p className="stat-value"><VerdictBadge verdict={analysis.verdict} /></p><p>Risk score: {Math.round(analysis.risk_decision.risk_score)}</p><p>Confidence: {(analysis.confidence * 100).toFixed(0)}%</p><p>Evidence strength: {(analysis.risk_decision.evidence_strength * 100).toFixed(0)}%</p><p>{analysis.recommended_action}</p></div><div className="detail-card"><h3>Extraction</h3><ul><li>{analysis.extraction.urls.length ? `URLs: ${analysis.extraction.urls.join(", ")}` : "No URLs extracted."}</li>{analysis.extraction.domains.length ? <li>Domains: {analysis.extraction.domains.join(", ")}</li> : null}{analysis.extraction.emails.length ? <li>Emails: {analysis.extraction.emails.join(", ")}</li> : null}{analysis.extraction.credential_terms.length ? <li>Credential terms: {analysis.extraction.credential_terms.join(", ")}</li> : null}</ul></div></div></section><EvidenceExplorer analysis={analysis} />
+  <section className="panel panel-full"><div className="panel-header"><div><p className="eyebrow">Findings</p><h2>Observed signals and uncertainty</h2></div></div><div className="findings-list">{analysis.findings.length ? analysis.findings.map((finding, index) => <div key={`${finding.finding}-${index}`} className="finding-item"><p className="finding-title">{finding.finding}{finding.is_inference ? <span className="badge badge-info">Inference</span> : null}</p><p>{finding.evidence}</p><p className="muted-copy">Source: {finding.source} · Confidence: {(finding.confidence * 100).toFixed(0)}%</p><span className={`severity severity-${finding.severity}`}>{finding.severity}</span></div>) : <p className="empty-text">No findings were recorded.</p>}</div></section>
+  <section className="panel panel-full"><div className="panel-header"><div><p className="eyebrow">Verification and provenance</p><h2>What supports the decision</h2></div></div><div className="detail-grid"><div className="detail-card"><h3>Agreements</h3>{verification.agreements.length ? <ul>{verification.agreements.map((item) => <li key={item}>{item}</li>)}</ul> : <p>None recorded.</p>}<h3>Contradictions</h3>{verification.contradictions.length ? <ul>{verification.contradictions.map((item) => <li key={item}>{item}</li>)}</ul> : <p>None detected.</p>}<h3>Unsupported claims</h3>{verification.unsupported_claims.length ? <ul>{verification.unsupported_claims.map((item) => <li key={item}>{item}</li>)}</ul> : <p>None recorded.</p>}</div><div className="detail-card"><h3>External corroboration</h3>{analysis.external_evidence?.length ? <ul>{analysis.external_evidence.map((item) => <li key={item.id}>{item.value} — {item.source}{item.retrieved_at ? `, retrieved ${formatDate(item.retrieved_at)}` : ""}</li>)}</ul> : <p>No external corroboration was returned for this investigation.</p>}<h3>Memory context</h3>{analysis.memory_traces?.length ? <ul>{analysis.memory_traces.map((item) => <li key={item.memory_id}>{item.content} — {item.provenance_label}; {item.retrieval_reason}</li>)}</ul> : <p>No prior memory was reused.</p>}</div></div></section></main>;
 }
 
+function HelpPage() { return <main id="main-content" className="page-grid"><section className="panel panel-full"><p className="eyebrow">Analyst guide</p><h2>Using VeriForge responsibly</h2><div className="detail-grid"><div className="detail-card"><h3>Start with the source</h3><p>Choose the closest input type and paste the suspicious content. Keep original context available outside this tool for your normal incident process.</p></div><div className="detail-card"><h3>Read the limitations</h3><p>Verdicts are decision support, not proof. Unsupported claims and unavailable integrations are shown separately from corroborated evidence.</p></div><div className="detail-card"><h3>Review provenance</h3><p>Open the evidence table to see observed indicators and their source. The relationship view is a convenience, not the sole evidence record.</p></div><div className="detail-card"><h3>Export and escalate</h3><p>Download the report JSON or print it for your case record, then follow your organization’s established escalation process.</p></div></div><p className="muted-copy">This prototype does not replace incident response, legal, or security review procedures.</p></section></main>; }
+function NotFoundPage() { return <main id="main-content" className="panel error-panel"><h2>Page not found</h2><p>That workspace view does not exist.</p><Link className="primary-button" to="/">Return to dashboard</Link></main>; }
 export default App;

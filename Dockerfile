@@ -18,5 +18,15 @@ RUN python -m pip install --upgrade pip && \
 COPY . .
 COPY --from=frontend-build /app/frontend/dist /app/frontend/dist
 
+# The service never needs root privileges. Named Compose volumes are populated
+# from these owned directories on first use.
+RUN useradd --create-home --uid 10001 --shell /usr/sbin/nologin veriforge && \
+    mkdir -p /app/data /app/.hmem && \
+    chown -R veriforge:veriforge /app
+
+USER veriforge
+
 EXPOSE 8000
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+  CMD python -c "from urllib.request import urlopen; urlopen('http://127.0.0.1:8000/ready', timeout=3)" || exit 1
 CMD ["uvicorn", "apps.api.main:app", "--host", "0.0.0.0", "--port", "8000"]

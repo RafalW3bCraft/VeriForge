@@ -102,7 +102,10 @@ def compute_evidence_coverage(extracted_evidence: Sequence[str], expected_featur
     if not extracted_norm:
         return 0.0
 
-    coverage = len(extracted_norm & expected_norm) / len(extracted_norm)
+    # Coverage asks whether expected observable characteristics were found.
+    # Dividing by extracted items instead measures precision and can make a
+    # single expected item look complete despite many expected omissions.
+    coverage = len(extracted_norm & expected_norm) / len(expected_norm)
     return max(0.0, min(1.0, coverage))
 
 

@@ -110,10 +110,17 @@ def get_message_metadata(event: WebhookEvent) -> dict[str, Any]:
 
 
 async def process_normalized_message(
-    event_id: str, normalized: NormalizedEmail, metadata: dict[str, Any]
+    event_id: str,
+    normalized: NormalizedEmail,
+    metadata: dict[str, Any],
+    *,
+    tenant_id: str = "legacy",
 ) -> AnalysisResponse | None:
     database = get_database()
     context = {
+        # This is supplied by deployment configuration, rather than by the
+        # signed (but still untrusted for tenancy) webhook payload.
+        "tenant_id": tenant_id,
         "source": "agentboxd",
         "message_id": normalized.message_id,
         "sender": normalized.sender,
@@ -128,7 +135,7 @@ async def process_normalized_message(
     }
     try:
         result = await analyze(normalized.body, "email", context)
-        database.save_analysis(result)
+        database.save_analysis(result, tenant_id=tenant_id)
         database.update_webhook_event(event_id, "processed", result.analysis_id)
         return result
     except Exception as exc:

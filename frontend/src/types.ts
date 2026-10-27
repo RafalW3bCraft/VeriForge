@@ -49,7 +49,7 @@ export interface MemoryTrace {
 
 export interface IntegrationStatus {
   name: string;
-  status: "available" | "unavailable" | "failed" | "not_configured";
+  status: "ready" | "not_configured" | "connecting" | "available" | "degraded" | "failed";
   detail: string;
 }
 
@@ -139,7 +139,16 @@ export interface AnalysisResponse {
 }
 
 export interface IntegrationsHealth {
-  zetaris: { status: string; configured: boolean };
+  zetaris: {
+    status: "ready" | "not_configured" | "connecting" | "available" | "degraded" | "failed";
+    configured: boolean;
+    authenticated?: boolean;
+    reachable?: boolean;
+    last_query_outcome?: string | null;
+    data_returned?: boolean | null;
+    last_query_at?: string | null;
+    failure_category?: string | null;
+  };
   hmem: { status: string; memories?: Record<string, number>; pending_conflicts?: number } & Record<string, unknown>;
 }
 

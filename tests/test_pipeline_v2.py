@@ -70,12 +70,15 @@ async def test_zetaris_outage_marks_incomplete_not_failed_analysis(monkeypatch, 
     monkeypatch.setenv("ZETARIS_BASE_URL", "http://127.0.0.1:1")  # unreachable
     monkeypatch.setenv("ZETARIS_ORG_ID", "1")
     monkeypatch.setenv("ZETARIS_API_KEY", "k")
+    monkeypatch.setenv("ZETARIS_IOC_DATASOURCE", "approved.ioc_records")
+    monkeypatch.setenv("ZETARIS_IOC_DOMAIN_COLUMN", "domain_name")
+    monkeypatch.setenv("ZETARIS_IOC_RECORD_ID_COLUMN", "ioc_id")
     reset_hmem_engine()
     from engine import analyze
 
     result = await analyze("Urgent: verify your account at https://secure-update.example immediately.")
     zetaris = next(s for s in result.integration_status if s.name == "zetaris")
-    assert zetaris.status in {"unavailable", "failed"}, f"got {zetaris.status}: {zetaris.detail}"
+    assert zetaris.status in {"degraded", "failed"}, f"got {zetaris.status}: {zetaris.detail}"
     # Analysis still returns a verdict — incomplete, never a top-severity one
     assert result.incomplete
     assert result.incomplete_reason

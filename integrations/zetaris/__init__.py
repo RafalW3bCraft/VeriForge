@@ -13,7 +13,9 @@ from integrations.zetaris.client import (
     ZetarisStatus,
     ZetarisQueryResult,
     ThreatIndicator,
+    RegisteredDataSource,
     get_zetaris_client,
+    normalize_hostname,
 )
 
 __all__ = [
@@ -24,5 +26,7 @@ __all__ = [
     "ZetarisStatus",
     "ZetarisQueryResult",
     "ThreatIndicator",
+    "RegisteredDataSource",
     "get_zetaris_client",
+    "normalize_hostname",
 ]

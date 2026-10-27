@@ -72,6 +72,7 @@ class Settings:
     agentboxd_api_key: str | None
     agentboxd_webhook_secret: str | None
     agentboxd_base_url: str
+    agentboxd_tenant_id: str
     database_url: str
     api_key: str | None
     cors_origins: tuple[str, ...]
@@ -83,6 +84,11 @@ class Settings:
     featherless_timeout_seconds: float
     featherless_max_retries: int
     risk_weights: tuple[float, float, float, float]
+    bootstrap_admin_username: str | None
+    bootstrap_admin_password: str | None
+    bootstrap_tenant_name: str
+    session_hours: int
+    session_cookie_secure: bool
 
     def validate_runtime(self) -> None:
         if not self.demo_mode and not self.featherless_api_key:
@@ -115,6 +121,8 @@ def get_settings() -> Settings:
         agentboxd_api_key=os.getenv("AGENTBOXD_API_KEY") or None,
         agentboxd_webhook_secret=os.getenv("AGENTBOXD_WEBHOOK_SECRET") or None,
         agentboxd_base_url=os.getenv("AGENTBOXD_BASE_URL", "https://api.agentboxd.com"),
+        # Webhook tenancy is deployment configuration, never message payload data.
+        agentboxd_tenant_id=os.getenv("AGENTBOXD_TENANT_ID", "legacy"),
         database_url=os.getenv("DATABASE_URL", "sqlite:///./veriforge.db"),
         api_key=os.getenv("VERIFORGE_API_KEY") or None,
         cors_origins=cors_origins,
@@ -128,4 +136,13 @@ def get_settings() -> Settings:
         ),
         featherless_max_retries=_read_nonnegative_int("FEATHERLESS_MAX_RETRIES", 2),
         risk_weights=risk_weights,
+        # Local accounts are deliberately opt-in until an administrator has
+        # supplied bootstrap credentials.  This preserves upgrades of the
+        # single-user prototype while making an accidentally public deployment
+        # fail closed as soon as accounts are configured.
+        bootstrap_admin_username=os.getenv("VERIFORGE_BOOTSTRAP_ADMIN_USERNAME") or None,
+        bootstrap_admin_password=os.getenv("VERIFORGE_BOOTSTRAP_ADMIN_PASSWORD") or None,
+        bootstrap_tenant_name=os.getenv("VERIFORGE_BOOTSTRAP_TENANT", "VeriForge"),
+        session_hours=_read_positive_int("VERIFORGE_SESSION_HOURS", 12),
+        session_cookie_secure=_read_bool("VERIFORGE_SESSION_COOKIE_SECURE", True),
     )

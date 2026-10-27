@@ -1,7 +1,8 @@
 import pytest
 from fastapi.testclient import TestClient
+from fastapi import FastAPI
 from database import get_database
-from apps.api.main import app
+from apps.api.main import app, mount_frontend_assets
 
 client = TestClient(app)
 
@@ -16,6 +17,24 @@ def isolated_database(tmp_path, monkeypatch):
 
 def test_health():
     assert client.get("/health").status_code == 200
+
+
+def test_frontend_assets_are_optional_and_only_mount_when_built(tmp_path):
+    missing = FastAPI()
+    assert mount_frontend_assets(missing, tmp_path / "missing") is False
+
+    index_only = tmp_path / "index-only"
+    index_only.mkdir()
+    (index_only / "index.html").write_text("<html></html>", encoding="utf-8")
+    assert mount_frontend_assets(FastAPI(), index_only) is False
+
+    built = tmp_path / "built"
+    assets = built / "assets"
+    assets.mkdir(parents=True)
+    (assets / "bundle.js").write_text("", encoding="utf-8")
+    built_app = FastAPI()
+    assert mount_frontend_assets(built_app, built) is True
+    assert any(getattr(route, "name", None) == "assets" for route in built_app.routes)
 
 def test_analysis_demo(monkeypatch):
     monkeypatch.setenv("DEMO_MODE", "true")

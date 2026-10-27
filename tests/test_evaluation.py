@@ -62,7 +62,8 @@ def test_evidence_coverage_handles_missing_evidence():
     extracted_evidence = ["urgent", "password", "github-security-check.zip"]
     evidence_features = ["urgent", "password"]
 
-    assert compute_evidence_coverage(extracted_evidence, evidence_features) == pytest.approx(2 / 3)
+    assert compute_evidence_coverage(extracted_evidence, evidence_features) == pytest.approx(1.0)
+    assert compute_evidence_coverage(["urgent"], evidence_features) == pytest.approx(0.5)
 
 
 def test_metric_summary_exposes_expected_fields():

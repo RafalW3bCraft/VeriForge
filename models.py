@@ -92,7 +92,7 @@ class IntegrationStatus(BaseModel):
     """Truthful sponsor-integration health for the UI."""
 
     name: str
-    status: Literal["available", "unavailable", "failed", "not_configured"]
+    status: Literal["ready", "not_configured", "connecting", "available", "degraded", "failed"]
     detail: str = ""
 
 
@@ -217,3 +217,31 @@ class AnalysisSummary(BaseModel):
 
 class AnalysisListResponse(BaseModel):
     items: list[AnalysisSummary]
+
+
+class LoginRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    username: str = Field(min_length=1, max_length=80)
+    password: str = Field(min_length=1, max_length=512)
+
+
+class CreateUserRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    username: str = Field(min_length=1, max_length=80)
+    password: str = Field(min_length=12, max_length=512)
+    role: Literal["admin", "analyst", "viewer"]
+
+
+class InvestigationGrantRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    user_id: str = Field(min_length=1, max_length=36)
+
+
+class InvestigationReviewRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    status: Literal["open", "reviewed", "resolved"]
+    notes: str | None = Field(default=None, max_length=2000)

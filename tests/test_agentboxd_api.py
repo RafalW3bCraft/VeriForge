@@ -7,7 +7,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from apps.api.main import app
-from database import WebhookEventRecord, get_database
+from database import AnalysisRecord, WebhookEventRecord, get_database
 
 WEBHOOK_SECRET = "unit-test-webhook-secret"
 
@@ -78,6 +78,9 @@ def test_valid_signed_event_is_accepted_and_analyzed(webhook_client):
         assert event.analysis_id is not None
     analysis = database.get_analysis(event.analysis_id)
     assert analysis.input_type == "email"
+    with database._session_factory() as session:
+        # Tenant scope is server configuration, never a field in the webhook.
+        assert session.get(AnalysisRecord, event.analysis_id).tenant_id == "legacy"
 
 
 def test_invalid_signature_is_rejected_before_persistence(webhook_client):

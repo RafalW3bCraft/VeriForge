@@ -143,7 +143,7 @@ async def analyze(
     external_evidence, zetaris_status = await correlate_indicators(extraction)
     integration_status.append(zetaris_status)
     _step(f"external_evidence:{zetaris_status.status}:{len(external_evidence)}")
-    if zetaris_status.status not in {"available", "not_configured"}:
+    if zetaris_status.status in {"degraded", "failed"}:
         incomplete = True
         incomplete_reasons.append(f"Zetaris {zetaris_status.status}: {zetaris_status.detail}")
 

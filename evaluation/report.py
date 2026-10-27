@@ -5,7 +5,16 @@ from pathlib import Path
 from typing import Any
 
 
-def build_report(dataset_size: int, category_counts: dict[str, int], metrics: dict[str, Any], confusion_matrix: dict[str, int], per_category: dict[str, Any], notable_failures: list[str], methodology: str) -> dict[str, Any]:
+def build_report(
+    dataset_size: int,
+    category_counts: dict[str, int],
+    metrics: dict[str, Any],
+    confusion_matrix: dict[str, int],
+    per_category: dict[str, Any],
+    notable_failures: list[str],
+    methodology: str,
+    provenance: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     return {
         "dataset_total": dataset_size,
         "category_counts": category_counts,
@@ -14,6 +23,7 @@ def build_report(dataset_size: int, category_counts: dict[str, int], metrics: di
         "per_category": per_category,
         "notable_failures": notable_failures,
         "methodology": methodology,
+        "provenance": provenance or {},
         "limitations": [
             "This benchmark is deterministic and offline; it does not rely on live Featherless or Agentboxd services.",
             "The result reflects the current demo-mode heuristic pipeline used in the local evaluation environment.",
@@ -36,6 +46,18 @@ def generate_markdown_report(report: dict[str, Any]) -> str:
         "## Methodology",
         report["methodology"],
         "",
+        "## Reproducibility",
+    ]
+    provenance = report.get("provenance", {})
+    if provenance:
+        lines.extend(
+            f"- {key.replace('_', ' ').capitalize()}: {value}"
+            for key, value in provenance.items()
+        )
+    else:
+        lines.append("- No provenance metadata was supplied.")
+    lines.extend([
+        "",
         "## Binary metrics",
         f"- Precision: {metrics.get('precision', 0.0):.4f}",
         f"- Recall: {metrics.get('recall', 0.0):.4f}",
@@ -50,12 +72,16 @@ def generate_markdown_report(report: dict[str, Any]) -> str:
         f"- FN: {report['confusion_matrix'].get('fn', 0)}",
         "",
         "## Notable failures",
-    ]
+    ])
     if report["notable_failures"]:
         for failure in report["notable_failures"]:
             lines.append(f"- {failure}")
     else:
         lines.append("- No notable failures recorded.")
+
+    lines.extend(["", "## Limitations"])
+    for limitation in report.get("limitations", []):
+        lines.append(f"- {limitation}")
 
     return "\n".join(lines) + "\n"
 

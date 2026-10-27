@@ -1,37 +1,63 @@
 # Test Evidence
 
-Every entry records the exact command, result, and limitations. Skipped/gated tests are marked, never claimed as passed.
+Audit date: 2026-10-27. All results below are local evidence, not hosted-CI
+or live-provider evidence. Generated benchmark reports are written to the
+ignored `.artifacts/` directory and never checked in as release proof.
 
-## Baseline (commit ff32c6c, audited 2026-10-26 05:00 UTC)
+## Baseline
 
-| Suite | Command | Result | Limitations |
-| --- | --- | --- | --- |
-| Python unit/API/integration | `PYTHON_DOTENV_DISABLED=true python -m pytest -q` | **63 passed** in 4.73s | Demo-mode heuristics only; no live LLM |
-| Frontend unit | `cd frontend && npm test` | **1 passed** | Single smoke test — thin coverage (pre-existing) |
-| Frontend build | `cd frontend && npm run build` | **PASS** (tsc + vite, 2.58s) | — |
-| Offline benchmark | `python -m evaluation.runner` | Ran; checked-in report showed F1 1.0, TN=45 | Report was stale: re-run at ff32c6c in a clean worktree gave F1 0.929, TN=50, FN=10 |
-| Docker Compose | — | NOT RUN | Compose plugin unavailable on this host |
+The pre-change local baseline was commit
+`507442d715434486ba3f66cd6bc791ff6ba715bc`; the required comparison point is
+`ff32c6cdd5e7762844dda3e80ac8f96e63db681b`.
 
-## New work (HEAD, verified 2026-10-26)
+| Check | Command | Result |
+| --- | --- | --- |
+| Python baseline | `PYTHON_DOTENV_DISABLED=true .venv/bin/python -m pytest -q` | 119 passed, 1 skipped in 77.15s |
+| Frontend baseline | `npm --prefix frontend test` | 1 passed |
+| Frontend production build | `npm --prefix frontend run build` | passed |
 
-| Suite | Command | Result | Limitations |
-| --- | --- | --- | --- |
-| Full Python suite | `PYTHON_DOTENV_DISABLED=true python -m pytest -q` | **119 passed, 1 skipped** in 7–62s | Skipped = live Zetaris connectivity (env-gated, never claimed) |
-| — Zetaris unit | `pytest tests/test_zetaris.py` | 12 passed (mocked HTTP) | Live test skipped without `ZETARIS_BASE_URL`/`ZETARIS_ORG_ID` |
-| — H-MEM contracts | `pytest tests/test_hmem.py` | 23 passed | Conformance-style pytest coverage; official TS runner targets TS impls |
-| — Pipeline v2 + security | `pytest tests/test_pipeline_v2.py tests/test_api_security.py` | 14 passed | Covers injection screening, outage, auth, memory reuse gate, isolation |
-| Frontend unit | `npm test` | **1 passed** | Coverage still thin (pre-existing pattern) |
-| Frontend build | `npm run build` | **PASS** (2.6–2.7s) | — |
-| Offline benchmark | `python -m evaluation.runner` | precision 1.0, recall 0.933, F1 0.929, TN 50/50, FN 10, decision_coverage 1.0 | **Identical to baseline re-run** — no regression; abstentions now reported |
-| Docker image | `docker build -t veriforge-test .` | **PASS** | Compose plugin absent on host; `docker run` verified instead |
-| Container runtime | `docker run -p 18000:8000 veriforge-test` + curl | /ready OK; `/api/v1/integrations/status` truthful; analyze → CRITICAL 90.0; second message → memory_traces attributed to first investigation (id 5673d389) | H-MEM acceptance gate demonstrated live |
-| Secret scan | grep for key-shaped strings in committed files | Clean | `.env`, `.hmem/` git-ignored |
+System Python did not have pytest; all Python commands use the repository
+`.venv`. The skipped test is the intentionally env-gated live Zetaris test.
 
-## Not run (honest list)
+## Post-change verification
 
-- Live Zetaris query/response acceptance gate — blocked on participant
-  instance URL provisioning (`ZETARIS_BASE_URL`).
-- `docker compose up` — compose plugin not installed on the build host;
-  the same image was verified via `docker build` + `docker run`.
-- Live Featherless (LLM) path — demo-mode heuristics tested; provider path
-  unchanged from baseline.
+| Check | Command | Result / scope |
+| --- | --- | --- |
+| Full Python suite | `PYTHON_DOTENV_DISABLED=true .venv/bin/python -m pytest -q` | 128 passed, 1 skipped in 114.70s. The skip was the live Zetaris acceptance gate. |
+| Auth, Zetaris, webhook/startup focused suite | `PYTHON_DOTENV_DISABLED=true .venv/bin/python -m pytest tests/test_agentboxd_api.py tests/test_auth_rbac.py tests/test_zetaris.py tests/test_api.py -q` | 50 passed, 1 skipped in 20.28s. Covers cookie session/CSRF/RBAC, startup mounting, malformed/outage Zetaris responses, and server-configured webhook tenancy. |
+| Evaluation/auth/provider regression chain | `PYTHON_DOTENV_DISABLED=true .venv/bin/python -m pytest tests/test_evaluation.py tests/test_agentboxd_api.py tests/test_zetaris.py tests/test_auth_rbac.py -q` | Completed in the final chained local verification; output capture was unavailable, so this is not counted as a release-approval result. The separately recorded focused suite remains the authoritative counted result. |
+| Frontend unit | `npm --prefix frontend test -- --reporter=dot` | 1 file, 4 tests passed in 7.74s. |
+| Frontend typecheck/build | `npm --prefix frontend run build` | passed in 5.17s; Vite emitted generated `dist/` output only. |
+| Offline benchmark | `PYTHON_DOTENV_DISABLED=true .venv/bin/python -m evaluation.runner` | Generated `.artifacts/latest_report.*`: precision 1.0000, recall 0.8667, F1 0.9286, TP 65, FP 0, TN 50, FN 10. This is an offline demo-heuristic benchmark, not live-provider performance. |
+| Compose validation | `docker compose config --quiet` | passed. |
+| Container build and smoke | `docker build -t veriforge-test .`; `docker run ... veriforge-test` | passed. `/ready` returned ready; `/api/v1/integrations/status` reported Zetaris `not_configured`; runtime UID was 10001. The temporary container was removed after the check. |
+| Python dependency audit | `.venv/bin/python -m pip_audit -r requirements.txt` | No known vulnerabilities found. |
+| Frontend production dependency audit | `npm --prefix frontend audit --omit=dev --audit-level=high` | 0 vulnerabilities found. |
+| High-confidence secret-format scan | `rg -n "AKIA…|ghp_…|sk-…|PRIVATE KEY"` over tracked source | No matches. CI enforces the same high-confidence patterns. |
+| Generated-file hygiene | `git ls-files -ci --exclude-standard` | 0 tracked ignored/generated files. |
+| Whitespace hygiene | `git diff --check` | passed. |
+
+## Deliberately gated or not claimed
+
+- **Live Zetaris**: not run. It requires `RUN_LIVE_ZETARIS_TESTS=1`, a
+  participant-provided UI URL, dedicated read-only identity, approved datasource
+  mapping, and known test hostname. No platform `.env` was read or copied.
+- **Live Featherless**: not run. Verification used deterministic demo mode.
+- **Public deployment / hosted CI / security audit**: not performed or claimed.
+- CI also runs dependency/secret scan commands; no hosted-CI result is claimed.
+
+## Reproduction sequence
+
+```sh
+python -m venv .venv
+.venv/bin/pip install -r requirements.txt
+npm --prefix frontend ci
+PYTHON_DOTENV_DISABLED=true .venv/bin/python -m pytest -q
+npm --prefix frontend test -- --reporter=dot
+npm --prefix frontend run build
+PYTHON_DOTENV_DISABLED=true .venv/bin/python -m evaluation.runner
+docker compose config --quiet
+```
+
+Run the live test only after the approved Zetaris prerequisites have been
+provided; its result is a release blocker, not an optional demonstration.

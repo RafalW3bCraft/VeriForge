@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import hashlib
 import logging
-from datetime import datetime, timezone
+import math
 
 from integrations.zetaris.client import (
     ZetarisClient,
@@ -30,12 +30,13 @@ def _evidence_id(kind: str, value: str, source: str) -> str:
     return f"ext-{digest}"
 
 
-def _dataset_for(kind: str) -> str:
-    # Dataset names configurable per deployment; defaults follow the
-    # zetaris getting-started open_data naming style.
-    import os
-
-    return os.getenv("ZETARIS_IOC_DATASET", "threat_indicators")
+def _safe_confidence(value: object) -> float:
+    """Accept a bounded numeric score without allowing malformed provider data."""
+    try:
+        confidence = float(value)
+    except (TypeError, ValueError):
+        return 1.0
+    return confidence if math.isfinite(confidence) and 0.0 <= confidence <= 1.0 else 1.0
 
 
 async def correlate_indicators(
@@ -44,52 +45,53 @@ async def correlate_indicators(
 ) -> tuple[list[ExternalEvidence], IntegrationStatus]:
     """Correlate extracted indicators against Zetaris datasets.
 
-    Returns (evidence, status). On any failure the status is explicit and
-    evidence is empty — never fabricated.
+    Returns (evidence, status). A successful zero-row query is explicitly
+    represented as no corroborating records. Failed attempts never count as
+    retrieval, and mixed outcomes are degraded rather than available.
     """
     client = client or get_zetaris_client(refresh=True)
     if client.status == ZetarisStatus.NOT_CONFIGURED:
         return [], IntegrationStatus(
             name="zetaris",
             status="not_configured",
-            detail="ZETARIS_BASE_URL/ZETARIS_ORG_ID/credentials not set",
+            detail="Zetaris credentials or registered IOC datasource not configured",
         )
 
     evidence: list[ExternalEvidence] = []
-    dataset = _dataset_for("domain")
-    queries_run = 0
+    datasource = client.config.datasource
+    # A configured client always has a datasource, but retain a non-sensitive
+    # fallback for test doubles and defensive callers.
+    source = f"zetaris:{datasource.relation}" if datasource else "zetaris:registered_ioc"
+    attempted_queries = 0
+    successful_queries = 0
     last_error: str | None = None
+    values_seen = 0
 
     async def _lookup(kind: str, values: list[str]) -> None:
-        nonlocal queries_run, last_error
+        nonlocal attempted_queries, successful_queries, last_error, values_seen
         for value in values[:MAX_INDICATORS_PER_KIND]:
+            values_seen += 1
             try:
-                if kind == "domain":
-                    result = await client.lookup_domain(value, dataset=dataset)
-                elif kind == "url":
-                    # URL lookup matches on the registered domain column
-                    result = await client.lookup_domain(value, dataset=dataset)
-                elif kind == "email":
-                    result = await client.lookup_domain(value.split("@")[-1], dataset=dataset)
-                else:
-                    continue
-                queries_run += 1
+                # lookup_domain also normalises URL and email-domain values;
+                # this guarantees a hostname match rather than matching paths.
+                attempted_queries += 1
+                result = await client.lookup_domain(value)
                 if result.status != ZetarisStatus.AVAILABLE:
                     last_error = result.error or result.status.value
                     continue
+                successful_queries += 1
                 for row in result.rows:
-                    retrieved_at = result.executed_at
                     evidence.append(
                         ExternalEvidence(
-                            id=_evidence_id(kind, value, dataset),
+                            id=_evidence_id(kind, value, source),
                             kind=kind,
-                            value=str(row.get("domain") or row.get("indicator") or value),
-                            source=f"zetaris:{dataset}",
-                            record_id=str(row.get("id") or row.get("record_id") or ""),
-                            query_ref=result.query[:200],
-                            retrieved_at=retrieved_at,
+                            value=str(row.get("indicator_value") or value),
+                            source=source,
+                            record_id=str(row.get("record_id") or ""),
+                            query_ref=result.query_ref,
+                            retrieved_at=result.executed_at,
                             observed=True,
-                            confidence=float(row.get("confidence", row.get("score", 1.0)) or 1.0),
+                            confidence=_safe_confidence(row.get("confidence", 1.0)),
                             matched_indicator=value,
                             tags=[str(t) for t in (row.get("tags") or [])] if isinstance(row.get("tags"), list) else [],
                         )
@@ -102,15 +104,25 @@ async def correlate_indicators(
     await _lookup("url", extraction.urls)
     await _lookup("email", extraction.emails)
 
-    if queries_run == 0:
+    if not values_seen:
         return evidence, IntegrationStatus(
             name="zetaris",
-            status="failed" if last_error else "unavailable",
-            detail=last_error or "No Zetaris queries could be executed",
+            status="ready",
+            detail="No supported observable indicators were extracted; no external query was needed",
         )
-    status = IntegrationStatus(
+    if successful_queries == 0:
+        return evidence, IntegrationStatus(
+            name="zetaris",
+            status="failed",
+            detail=last_error or "All required Zetaris enrichment queries failed",
+        )
+    status = "available" if successful_queries == attempted_queries else "degraded"
+    outcome = "no corroborating records" if not evidence else f"{len(evidence)} record(s) correlated"
+    return evidence, IntegrationStatus(
         name="zetaris",
-        status="available",
-        detail=f"{queries_run} queries executed, {len(evidence)} record(s) correlated",
+        status=status,
+        detail=(
+            f"{successful_queries} successful retrieval query/queries of {attempted_queries} attempted; "
+            f"{outcome}" + (f"; failures: {last_error}" if last_error else "")
+        ),
     )
-    return evidence, status

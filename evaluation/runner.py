@@ -3,9 +3,12 @@ from __future__ import annotations
 import asyncio
 import json
 import os
+import subprocess
 from collections import Counter
 from pathlib import Path
 from typing import Any
+from unittest.mock import patch
+from datetime import datetime, timezone
 
 from evaluation.dataset import EvaluationSample, build_default_dataset
 from evaluation.metrics import (
@@ -103,9 +106,10 @@ async def _evaluate_sample(sample: EvaluationSample) -> dict[str, Any]:
 
 def evaluate_dataset(dataset: list[EvaluationSample] | None = None) -> dict[str, Any]:
     active_dataset = list(dataset or build_default_dataset())
-    os.environ["DEMO_MODE"] = "true"
-
-    results = asyncio.run(_evaluate_all(active_dataset))
+    # The runner must not leak a process-wide environment mutation into later
+    # tests or callers. The pipeline is deliberately evaluated in offline mode.
+    with patch.dict(os.environ, {"DEMO_MODE": "true"}):
+        results = asyncio.run(_evaluate_all(active_dataset))
 
     expected_labels = [item["expected_label"] for item in results]
     observed_labels = [item["observed_label"] for item in results]
@@ -156,6 +160,13 @@ def evaluate_dataset(dataset: list[EvaluationSample] | None = None) -> dict[str,
         "Ambiguous cases are reported separately and excluded from the strict binary classification metrics."
     )
 
+    try:
+        revision = subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], text=True, stderr=subprocess.DEVNULL
+        ).strip()
+    except (OSError, subprocess.CalledProcessError):
+        revision = "unknown"
+
     report = build_report(
         dataset_size=len(active_dataset),
         category_counts=_category_counts(active_dataset),
@@ -175,6 +186,13 @@ def evaluate_dataset(dataset: list[EvaluationSample] | None = None) -> dict[str,
         per_category=category_performance,
         notable_failures=notable_failures[:20],
         methodology=methodology,
+        provenance={
+            "code_revision": revision,
+            "dataset": "evaluation.dataset.build_default_dataset",
+            "mode": "offline demo heuristics",
+            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "command": "python -m evaluation.runner",
+        },
     )
     report["samples"] = results
     return report

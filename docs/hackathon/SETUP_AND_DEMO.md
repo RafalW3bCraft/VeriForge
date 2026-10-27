@@ -5,7 +5,8 @@
 - Python 3.10+ and pip; Node.js 22 + npm; or Docker (29+).
 - No sponsor credentials are needed for the offline demo (`DEMO_MODE=true`).
 - Live Zetaris requires the participant's own instance: set
-  `ZETARIS_BASE_URL` (UI origin), `ZETARIS_ORG_ID`, `ZETARIS_API_KEY`.
+  `ZETARIS_BASE_URL` (UI origin), `ZETARIS_ORG_ID`, either dedicated
+  read-only credential form, and the approved IOC datasource/column mapping.
 
 ## Local run (verified)
 
@@ -29,14 +30,15 @@ curl -fsS http://127.0.0.1:8000/ready
 curl -fsS http://127.0.0.1:8000/api/v1/integrations/status
 ```
 
-`docker-compose.yml` is unchanged from baseline and works with
-`docker compose up --build` where the compose plugin is installed.
+Compose uses migration-on-start, non-root runtime, health checks, and named
+SQLite/H-MEM volumes. Validate its configuration with `docker compose config --quiet`
+before starting it.
 
 ## Tests (all commands verified)
 
 ```sh
-PYTHON_DOTENV_DISABLED=true python -m pytest -q   # 119 passed, 1 skipped
-cd frontend && npm test && npm run build          # 1 passed; build OK
+PYTHON_DOTENV_DISABLED=true .venv/bin/python -m pytest -q
+cd frontend && npm ci && npm test && npm run build
 python -m evaluation.runner                       # benchmark -> .artifacts/
 ```
 
@@ -63,11 +65,12 @@ Verified live in Docker: second response included
 
 ### Zetaris (pending live instance URL)
 
-Mocked contract tests pass (`tests/test_zetaris.py`). Live gate: set
-`ZETARIS_BASE_URL`/`ZETARIS_ORG_ID`/`ZETARIS_API_KEY`, then:
+Mocked contract tests pass (`tests/test_zetaris.py`). Live gate: configure the
+approved datasource and read-only credentials, then:
 
 ```sh
-python -m pytest tests/test_zetaris.py::test_zetaris_live_connectivity -q
+RUN_LIVE_ZETARIS_TESTS=1 .venv/bin/python -m pytest \
+  tests/test_zetaris.py::test_live_registered_datasource_normalized_lookup_contract -q
 curl -fsS localhost:8000/api/v1/integrations/status   # zetaris.status = available
 ```
 

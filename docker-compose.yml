@@ -8,12 +8,19 @@ services:
     environment:
       DEMO_MODE: "${DEMO_MODE:-true}"
       DATABASE_URL: "${DATABASE_URL:-sqlite:////app/data/veriforge.db}"
+      HMEM_DATA_DIR: "${HMEM_DATA_DIR:-/app/data/hmem}"
       PYTHONUNBUFFERED: "1"
     ports:
       - "8000:8000"
     volumes:
       - veriforge-data:/app/data
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "from urllib.request import urlopen; urlopen('http://127.0.0.1:8000/ready', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
 
 volumes:
   veriforge-data:

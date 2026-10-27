@@ -1,30 +1,20 @@
 # Integration Status
 
-Updated continuously. "Live" means a real network call against a real sponsor system with real credentials — never a mock.
+## Zetaris — implemented, live IOC verification blocked
 
-## Zetaris
+VeriForge uses only the Zetaris UI proxy endpoint `POST /api/proxy/query/sql/start` with `select` and `pageLimit`. It does not call the raw API or permit arbitrary SQL.
 
-- Credential presence: `ZETARIS_API_KEY` present in `.env` (value never read or logged).
-- Instance URL: NOT configured (`ZETARIS_URL` absent) — live connectivity BLOCKED on user provisioning.
-- Documented access routes (from zetaris/getting-started): SQL Editor, agent JDBC, HTTP helpers using **UI proxy routes** ("the raw API URL is not a substitute"), auth via `.env.local` per scripts/HOWTO.md.
-- Implementation route chosen: HTTP helper (SQL over UI proxy), read-only `SELECT` via validated templates.
-- Status: IMPLEMENTED — `integrations/zetaris/` client with validated read-only templates, auth headers (Bearer + X-Org-ID + X-Request-ID), 30s timeout, bounded limits, explicit not_configured/unavailable/failed statuses, injection rejection. 12 mocked unit tests green; live test env-gated.
-- Live evidence: PENDING (blocked on participant instance URL `ZETARIS_BASE_URL`). Outage path verified: investigation marked incomplete, verdict capped, status truthful.
+The integration requires a dedicated read-only identity plus these runtime mappings: `ZETARIS_BASE_URL`, `ZETARIS_ORG_ID`, credentials, `ZETARIS_IOC_DATASOURCE`, `ZETARIS_IOC_DOMAIN_COLUMN`, and `ZETARIS_IOC_RECORD_ID_COLUMN`. Datasource and column identifiers are strictly validated; values are normalized hostnames and safely represented in fixed read-only query templates.
 
-## Meterless H-MEM
+- Mocked transport/correlation coverage: implemented.
+- Live acceptance test: `RUN_LIVE_ZETARIS_TESTS=1 ... pytest tests/test_zetaris.py -q`.
+- Live evidence: **not verified**. The local Zetaris platform was inspected but not running, and no approved IOC datasource/read-only account was supplied to this application.
+- Submission impact: mandatory sponsor evidence remains blocked until that test passes.
 
-- Nature of dependency: architecture spec + runnable TS reference implementation (Apache-2.0), not a hosted API. The repo explicitly directs implementers to build the contracts in their own stack.
-- Implementation route chosen: in-process Python engine (`hmem/`) implementing the canonical memory record, tiered store, hybrid retrieval with trace, trust ledger, conflict/supersede semantics; conformance suite run where compatible.
-- Dreaming/sleep cycles: excluded from critical path (spec marks them opt-in).
-- `METERLESS_API_KEY` present in `.env` but unused by the reference implementation (no hosted endpoint documented); recorded as unused unless Meterless publishes a service.
-- Status: IMPLEMENTED — `hmem/` package (store, retrieval, ledger, conflicts, engine) with 23 conformance-style tests green; acceptance gate (cross-investigation memory reuse with attribution) demonstrated live in Docker.
-- Not implemented (documented, spec-optional): dreaming cycle, sleep cycle. Embedding-backed semantic search uses the spec's model-free fallback instead.
+## Meterless H-MEM — local implementation, not hosted certification
 
-## Featherless (pre-existing)
+The `hmem/` package persists canonical memory records, retrieval traces, trust ledger entries, conflicts, supersession, and tenant/investigation scoping in-process. It is tested as a Python implementation of applicable H-MEM concepts. It is not represented as a Meterless-hosted API, official certification, or proof of sponsor acceptance. Dreaming/sleep-cycle features remain out of scope.
 
-- Unchanged. Used as the LLM provider when `DEMO_MODE=false`. Not a hackathon sponsor.
+## Featherless and Agentboxd
 
-## Cursor / NVIDIA
-
-- Cursor: not used. Recorded per rules.
-- NVIDIA: no enhancement planned; optional per rules.
+Featherless remains optional for live reasoning; offline demo-mode tests do not establish live-provider behavior. Agentboxd ingestion retains signed webhook verification and replay/idempotency protections; it must be server-configured to an owning tenant in account mode before production use.
