@@ -82,6 +82,10 @@ Copy `.env.example` to `.env` before starting the app or using Compose. `.env` i
 | `RATE_LIMIT`, `MAX_INPUT_CHARS`, `MAX_REQUEST_BYTES` | Request limits. |
 | `RETENTION_DAYS` | Retention window for saved analyses and webhook metadata. |
 | `RISK_WEIGHT_IDENTITY`, `RISK_WEIGHT_INFRASTRUCTURE`, `RISK_WEIGHT_SOCIAL`, `RISK_WEIGHT_VERIFICATION` | Nonnegative risk weights; their sum must equal 1. |
+| `VERIFORGE_API_KEY` | When set, analysis history endpoints require the `X-API-Key` header. |
+| `ZETARIS_BASE_URL`, `ZETARIS_ORG_ID`, `ZETARIS_API_KEY` | Zetaris instance UI origin, org id, and credential for live indicator correlation. Optional — app runs offline and reports `not_configured` without them. |
+| `ZETARIS_QUERY_LIMIT`, `ZETARIS_ENGINE_ID`, `ZETARIS_TIMEOUT_SECONDS` | Zetaris query bounds and optional engine. |
+| `HMEM_DATA_DIR` | H-MEM memory persistence directory; defaults to `./.hmem`. |
 
 Additional timeout, retry, and logging settings are defined in [config.py](config.py). For live analysis, set `DEMO_MODE=false` and provide a valid `FEATHERLESS_API_KEY`. Configure `AGENTBOXD_WEBHOOK_SECRET` only when accepting signed webhook events. See [docs/FEATHERLESS.md](docs/FEATHERLESS.md) and [docs/AGENTBOXD.md](docs/AGENTBOXD.md).
 
